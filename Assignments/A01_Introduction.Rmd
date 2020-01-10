@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: Thomas Hancock
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -22,21 +22,21 @@ The completed exercise is due on Tuesday, January 14th at 1:00 pm.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I used R last semester in ENV 710, as well as in an intro stats course for engineers and a Bayesian Analysis class (both at NC State last year). I have never used Git before. I have had minimal formal data analytics experience outside of keeping track of spreadsheets while working at an engineering company.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I feel like I know how to use R documentation and Google to find ways to make R do things.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: I have never used RMarkdown before, but I saw other people have less-than-perfect experiences with it last semester. I also do not know how to use GitHub, so we will see how steep that learning curve is.
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
-> Answer: 
+> Answer: https://github.com/tnh2/Environmental_Data_Analytics_2020
 
 
