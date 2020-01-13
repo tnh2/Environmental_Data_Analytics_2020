@@ -39,4 +39,3 @@ Provide a link below to your forked course repository in GitHub. Make sure you h
 
 > Answer: https://github.com/tnh2/Environmental_Data_Analytics_2020
 
-
