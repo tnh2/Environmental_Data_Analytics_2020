@@ -36,22 +36,22 @@ vector2
 vector3 <- c(TRUE,TRUE,TRUE,FALSE,TRUE,FALSE) #logical vector
 vector3
 
-vector1[3] # 
+vector1[3] # Prints 3rd element of vector1 (prints 5.3)
 
 # Matrices ----
-matrix1 <- matrix(1:20, nrow = 5,ncol = 4) # 
+matrix1 <- matrix(1:20, nrow = 5,ncol = 4) # creates a 5x4 matrix with numbers from 1 to 20
 matrix1
-matrix2 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE) #
+matrix2 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE) # creates 5x4 matrix with numbers in order along rows
 matrix2
 matrix3 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE, # return after comma continues the line
                   dimnames = list(c("uno", "dos", "tres", "cuatro", "cinco"), 
-                                  c("un", "deux", "trois", "cat"))) #
+                                  c("un", "deux", "trois", "cat"))) # creates matrix with row names in spanish and column names in french
 
-matrix1[4, ] #
-matrix1[ , 3] #
-matrix1[c(12, 14)] #
-matrix1[c(12:14)] #
-matrix1[2:4, 1:3] #
+matrix1[4, ] # returns the entire 4th row of matrix1
+matrix1[ , 3] # returns the entire 3rd column of matrix1
+matrix1[c(12, 14)] # return 12th and 14th element of matrix1
+matrix1[c(12:14)] # returns 12 through 14th (12th, 13th, 14th) elements of matrix1
+matrix1[2:4, 1:3] # returns array of rows 2 through 4 and columns 1 through 3
 
 cells <- c(1, 26, 24, 68)
 rnames <- c("R1", "R2")
@@ -63,51 +63,59 @@ matrix4
 # Lists ---- 
 list1 <- list(name = "Maria", mynumbers = vector1, mymatrix = matrix1, age = 5.3); list1
 list1[[2]]
+# Lists can have data of different sizes!
 
 # Data Frames ----
-d <- c(1, 2, 3, 4) # What type of vector?
-e <- c("red", "white", "red", NA) # What type of vector?
-f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector?
-dataframe1 <- data.frame(d,e,f) #
-names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) # 
+d <- c(1, 2, 3, 4) # What type of vector? Numeric
+e <- c("red", "white", "red", NA) # What type of vector? String
+f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector? Logical
+dataframe1 <- data.frame(d,e,f) # Data frame composed of the three vectors d, e, and f
+names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) # Names the columns of the df and opens it in a new tab
 
-dataframe1[1:2,] # 
-dataframe1[c("ID","Passed")] # 
-dataframe1$ID
+dataframe1[1:2,] # Prints the first 2 rows in dataframe1 for all columns (ID, color, and passed)
+dataframe1[c("ID","Passed")] # Prints columns ID and Passed
+dataframe1$ID # Prints ID column
 
 ```
 Question: How do the different types of data appear in the Environment tab?
 
-> Answer: 
+> Answer: The vectors and single values are in the "Values" section, data types with multiple columns or sets of data are in "Data".
 
 Question: In the R chunk below, write "dataframe1$". Press `tab` after you type the dollar sign. What happens?
 
-> Answer: 
+> Answer: It selects and fills in the first column of the dataframe (ID)
 
 ### Coding challenge
 
 Find a ten-day forecast of temperatures (Fahrenheit) for Durham, North Carolina. Create two vectors, one representing the high temperature on each of the ten days and one representing the low.
 
 ```{r}
-
+highF <- c(44, 47, 51, 39, 37, 43, 45, 48, 56, 51)
+lowF <- c(30, 44, 24, 23, 21, 26, 28, 38, 34, 32)
 ```
 
 Now, create two additional vectors that include the ten-day forecast for the high and low temperatures in Celsius.
 
 ```{r}
-
+highC <- (highF - 32) * 5/9; highC
+lowC <- (lowF - 32) * 5/9; lowC
 ```
 
 Combine your four vectors into a data frame and add informative column names.
 
 ```{r}
-
+temps <- data.frame(highF, lowF, highC, lowC)
+names(temps) <- c("HighF", "LowF", "HighC", "LowC")
+temps
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.
 
 ```{r}
-
+summary(temps) # Summary for all data
+sd(temps) # Std. dev. for all data - This doesn't seem to work for the whole data frame
+summary(temps$HighF) # Summary for one row
+sd(temps$HighF) # Std. dev. for one row
 ```
 
 
@@ -132,7 +140,7 @@ If a package is already installed, you will need to load it every session. You c
 # We will use the packages dplyr and ggplot2 regularly. 
 #install.packages("dplyr") 
 #install.packages("ggplot2")
-# comment out install commands, use only when needed and re-comment
+# comment out install commands, use only when needed and re-comment - R Markdown doesnt' knit with install lines active
 
 library(dplyr)
 library(ggplot2)
@@ -144,7 +152,7 @@ library(tidyverse)
 
 Question: What happens in the console when you load a package?
 
-> Answer: 
+> Answer: It shows the progress and any associated packages
 
 
 ## Tips and Tricks
