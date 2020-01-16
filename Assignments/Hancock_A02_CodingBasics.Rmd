@@ -1,6 +1,6 @@
 ---
 title: "Assignment 2: Coding Basics"
-author: "Student Name"
+author: "Tommy Hancock"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -33,11 +33,12 @@ The completed exercise is due on Tuesday, January 21 at 1:00 pm.
 
 ```{r}
 #1. 
-
+num_list <- seq(1, 100, 4) # Generate a sequence of numbers from 1 to 100 by 4s
 #2. 
-
+mean(num_list) # Calculate the mean
+median(num_list) # Calculate the median
 #3. 
-
+mean(num_list) > median(num_list) # Return TRUE if the mean is greater than the median
 ```
 
 ## Basics Day 2
@@ -51,21 +52,42 @@ The completed exercise is due on Tuesday, January 21 at 1:00 pm.
 8. Label the columns of your data frame with informative titles.
 
 ```{r}
+names <- c("Scotty", "Lily", "Samantha", "Ronald") # String vector of names
+scores <- c(76, 98, 86, 82) # Numeric vector with test scores
+pass <- scores >= 50 # Logical vector determining whether the student passed
 
+test_results <- data.frame(names, scores, pass) # Create a dataframe from the vectors
+names(test_results) <- c("Name", "Score", "Pass")
+
+test_results
 ```
 
 9. QUESTION: How is this data frame different from a matrix?
 
-> Answer: 
+> Answer: The different columns of the dataframe have different types of data in them (string, numeric, and logical), whereas a matrix requires all the data to be of the same type.
 
 10. Create a function with an if/else statement. Your function should determine whether a test score is a passing grade of 50 or above (TRUE or FALSE). You will need to choose either the `if` and `else` statements or the `ifelse` statement. Hint: Use `print`, not `return`. The name of your function should be informative.
 
 11. Apply your function to the vector with test scores that you created in number 5. 
 
 ```{r}
+pass_func1 <- function(x) { # Function using if/else to determine if a score passes
+ if (x >= 50) {
+   print("Pass")
+ } 
+  else {
+    print("Fail")
+  }
+}
 
+pass_func2 <- function(x) { # Function using ifelse to determine if a score passes
+  ifelse(x >= 50, "Pass", "Fail")
+}
+
+pass_func1(scores)
+pass_func2(scores)
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: 
+> Answer: The ifelse function worked when applied to the "scores" vector, whereas the if/else function did not work for the vector. (Both worked for individual scores, though.) I got these results because the if/else statement requires a single value to evaluate, whereas the ifelse function is applied sequentially to all values within the vector.
