@@ -64,10 +64,10 @@ You may also import datasets from the Files tab, but this is not recommended sin
 #read.csv("/Users/katerisalk/Documents/Duke/Courses/Environmental_Data_Analytics/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Relative file path (friendly for users regardless of machine)
-USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
+USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw")
 
 # What happens if we don't assign a name to our imported dataset?
-#read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")
+#read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Another option is to choose with your browser
 # read.csv(file.choose())
@@ -80,16 +80,16 @@ USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 ## EXPLORE YOUR DATASET
 
 Take a moment to read through the README file associated with the USGS dataset on discharge at the Eno River. Where can you find this file? How does the placement and information found in this file relate to the best practices for reproducible data analysis?
-> ANSWER: 
+> ANSWER: This file is in the metadata folder. This metadata shows how to recreate the raw data file (steps to getting the data from USGS in this case), as well as the description of the data, units used, and a file naming convention so users can know the significance of the files. In particular, the convention helps users differentiate the raw/cleaned/processed data files, which is useful since they have very similar names.
 
 ```{r}
 View(USGS.flow.data)
 # Alternate option: click on data frame in Environment tab
 
-class(USGS.flow.data)
-colnames(USGS.flow.data)
+class(USGS.flow.data) # Returns the class of the data (dataframe)
+colnames(USGS.flow.data) # Returns the names of the columns
 
-# Rename columns
+# Rename columns - can use column indexing to rename a specific column
 colnames(USGS.flow.data) <- c("agency_cd", "site_no", "datetime", 
                               "discharge.max", "discharge.max.approval", 
                               "discharge.min", "discharge.min.approval", 
@@ -97,25 +97,25 @@ colnames(USGS.flow.data) <- c("agency_cd", "site_no", "datetime",
                               "gage.height.max", "gage.height.max.approval", 
                               "gage.height.min", "gage.height.min.approval", 
                               "gage.height.mean", "gage.height.mean.approval")
-str(USGS.flow.data)
-dim(USGS.flow.data)
-length(USGS.flow.data)
+str(USGS.flow.data) # Returns the structure of the dataframe
+dim(USGS.flow.data) # Returns the dimensions of the dataframe (rows and columns)
+length(USGS.flow.data) # Returns the number of columns/variables (15)
 
-head(USGS.flow.data)
-head(USGS.flow.data, 10)
-tail(USGS.flow.data, 5)
-USGS.flow.data[30000:30005, c(3, 8, 14)]
+head(USGS.flow.data) # Displays the first 10 entries
+head(USGS.flow.data, 10) # Displays the first 'X' (in this case, 10) entries
+tail(USGS.flow.data, 5) # Displays the last 'X' (5) entries
+USGS.flow.data[30000:30005, c(3, 8, 14)] # Displays the 3r, 8th, and 14th column of entries 30000 through 30005
 
-class(USGS.flow.data$datetime)
+class(USGS.flow.data$datetime) # Returns the class of the datetime column
 class(USGS.flow.data$discharge.mean)
 class(USGS.flow.data$gage.height.mean)
 
-summary(USGS.flow.data)
+summary(USGS.flow.data) # Provides a summary (including statistics) about the data(frame)
 
 ```
 
 What happened to blank cells in the spreadsheet when they were imported into R?
-> Answer: 
+> Answer: They were filled in with "NA" if they are numeric, and left blank for factored data
 
 ## Adjusting Datasets
 
@@ -129,12 +129,12 @@ summary(USGS.flow.data$gage.height.mean)
 ```
 Question: What types of research questions might make it favorable to remove NAs from a dataset, and what types of research questions might make it favorable to retain NAs in the dataset?
 
-> Answer: 
+> Answer: Removing NAs might be helpful for looking at numeric analysis and/or studies that only look at entries that recorded a number (e.g., amking a correlation matrix). Not removing NAs is useful for recognizing there is missing data.
 
 ```{r}
-USGS.flow.data.complete <- na.omit(USGS.flow.data)
+USGS.flow.data.complete <- na.omit(USGS.flow.data) # Creates a new df without NAs (entire row is removed if it contains an "NA" value)
 dim(USGS.flow.data)
-dim(USGS.flow.data.complete)
+dim(USGS.flow.data.complete) # Note that there are fewer entires
 
 mean(USGS.flow.data.complete$discharge.mean)
 sd(USGS.flow.data.complete$discharge.mean)
@@ -167,28 +167,28 @@ help(as.Date)
 # An example is provided to get you started.
 # (code must be uncommented)
 today <- Sys.Date()
-format(today, format = "%B")
-#format(today, format = "")
-#format(today, format = "")
-#format(today, format = "")
+format(today, format = "%B") # Returns month (longhand)
+format(today, format = "%d, %m, %Y") # Returns day (##), month (##), year (####)
+format(today, format = "A, %B, %d") # Returns day of week, month (longhand), and year (##)
+format(today, format = "") # Returns data in base format (year - month - day)
 
-USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y") 
+USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y") # Format as date using format month-day-year
 ```
 
 Note that for every date prior to 1969, R has assigned the date in the 2000s rather than the 1900s. This can be fixed with an `ifelse` statement inside a function. Run through the code below and write what is happening in the comment above each line.
 
 ```{r}
-# 
-USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d")
+# Puts data in year+month+day format
+USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d") 
 
-#
+# Adds a 19 to the beginning of certain dates and 20 to others (so year is in long format) 
 create.early.dates <- (function(d) {
        paste0(ifelse(d > 181231,"19","20"),d)
        })
-#
+# Run the fucntion on the datetime vector of the data frame
 USGS.flow.data$datetime <- create.early.dates(USGS.flow.data$datetime)
 
-#
+# Convert from Year+month+date to Year-month-date
 USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%Y%m%d") 
 
 ```
