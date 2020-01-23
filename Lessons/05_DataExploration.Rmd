@@ -67,24 +67,24 @@ ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
 Visualize distributions of values for continuous numerical variables. What is happening in each line of code? Insert a comment above each line.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+# Creates a histogram of the mean discharges - heavily skewed to the right
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean))
 
-#
+# Creates a histogram of mean discharge with bins with values of 10 (many more bins)
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), binwidth = 10)
 
-#
+# Another histogram with a set number (20) of bins
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), bins = 20)
 
-#
+# Histogram with bins of width 10, but the x-axis is limited to 500, so we don't show the long tail
 ggplot(USGS.flow.data, aes(x = discharge.mean)) +
   geom_histogram(binwidth = 10) + 
   scale_x_continuous(limits = c(0, 500))
   
-#
+# Histogram of mean gage height (this one looks ok in the default settings)
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = gage.height.mean))
 
@@ -94,14 +94,19 @@ ggplot(USGS.flow.data) +
 An alternate to a histogram is a frequency polygon graph (distributions of values for continuous numerical variables). Instead of displaying bars,  counts of continuous variables are displayed as lines. This is advantageous if you want to display multiple variables or categories of variables at once.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+# Line plot of mean, min, and max gage heights (all on the same plot) - shape suggests there might be more data for means than mins and maxes
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean), bins = 50) +
-  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "darkgray") +
+  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "blue") +
   geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
   scale_x_continuous(limits = c(0, 10))
 
-#
+# Find out how many NA's there are for gage height mins, maxes, and means
+summary(USGS.flow.data$gage.height.min)
+summary(USGS.flow.data$gage.height.max)
+summary(USGS.flow.data$gage.height.mean)
+
+# Line plot showing the count of gage height values by approval (one colored line for each)
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean, color = gage.height.mean.approval), bins = 50) +
   scale_x_continuous(limits = c(0, 10)) +
@@ -123,18 +128,19 @@ A box-and-whisker plot is yet another alternative to histograms (distributions o
 An alternate option is a violin plot, which displays density distributions, somewhat like a hybrid of the box-and-whiskers and the frequency polygon plot.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+# Box and whisker plots of mean gage height - one for each level of approval
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean.approval, y = gage.height.mean))
 
-#
+# Box and whisker plots of mean discharge for each mean gage height level (broken into 1-foot gage height intervals (?))
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean, y = discharge.mean, group = cut_width(gage.height.mean, 1)))
 
-#
+# Violin plots of mean gage height for each level of approval
 ggplot(USGS.flow.data) +
   geom_violin(aes(x = gage.height.mean.approval, y = gage.height.mean), 
-              draw_quantiles = c(0.25, 0.5, 0.75))
+              draw_quantiles = c(0.25, 0.5, 0.75),
+              scale = "count")
 ```
 
 ### Scatterplot (function: geom_point)
