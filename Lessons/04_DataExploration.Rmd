@@ -64,7 +64,7 @@ You may also import datasets from the Files tab, but this is not recommended sin
 #read.csv("/Users/katerisalk/Documents/Duke/Courses/Environmental_Data_Analytics/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Relative file path (friendly for users regardless of machine)
-USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw")
+USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # What happens if we don't assign a name to our imported dataset?
 #read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
@@ -183,7 +183,7 @@ USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d")
 
 # Adds a 19 to the beginning of certain dates and 20 to others (so year is in long format) 
 create.early.dates <- (function(d) {
-       paste0(ifelse(d > 181231,"19","20"),d)
+       paste0(ifelse(d > 191231,"19","20"),d)
        })
 # Run the fucntion on the datetime vector of the data frame
 USGS.flow.data$datetime <- create.early.dates(USGS.flow.data$datetime)
