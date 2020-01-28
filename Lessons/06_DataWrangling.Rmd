@@ -19,7 +19,7 @@ Today we will work with a dataset from the [North Temperate Lakes Long-Term Ecol
 
 Opening discussion: why might we be interested in long-term observations of temperature, oxygen, and light in lakes?
 
-> Add notes here: 
+> Add notes here: These factors can affect local food chains and ecosystems, so these can indicate ecosystem health. They can also impact algal blooms. There can be long-term monitoring of climate change impacts.
 
 ```{r, message = FALSE}
 getwd()
@@ -62,14 +62,14 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
-`!=`
-`<`
-`<=`
-`>`
-`>=`
-`&`
-`|`
+`==` equivalent to
+`!=` not equivalent to
+`<`  less than
+`<=` less than or equal to
+`>`  greater than
+`>=` greater than or equal to
+`&`  and
+`|`  or
 
 ```{r}
 class(NTL.phys.data$lakeid)
@@ -110,15 +110,17 @@ NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304))
 # filter NTL.phys.data for the year 1999
 # what code do you need to use, based on the class of the variable?
 class(NTL.phys.data$year4)
+NTL.phys.data.1999 <- filter(NTL.phys.data, year4 == 1999)
 
 # Exercise: 
 # filter NTL.phys.data for Tuesday Lake from 1990 through 1999.
-
+NTL.phys.data.1990thru1999 <- filter(NTL.phys.data, year4 >= 1990 & year4 <= 1999 &
+                                     lakename == "Tuesday Lake")
 
 ```
 Question: Why don't we filter using row numbers?
 
-> Answer: 
+> Answer: Filtering by row numbers isn't as reproducible and requires a lot more thinking to figure out what rows to use. Also, there might not be an even number of samples per year.
 
 ### Arrange
 
@@ -131,12 +133,12 @@ NTL.phys.data.depth.descending <- arrange(NTL.phys.data, desc(depth))
 # Exercise: 
 # Arrange NTL.phys.data by temperature, in descending order. 
 # Which dates, lakes, and depths have the highest temperatures?
-
-
+NTL.phys.data.temp.desc <- arrange(NTL.phys.data, desc(temperature_C))
+head(NTL.phys.data.temp.desc)
 ```
 ### Select
 
-Selecting allows us to choose certain columns (variables) in our dataset.
+Selecting allows us to choose certain columns (variables) in our dataset. Can exclude columns using a negative sign (but can't mix inclusion and exclusion)
 
 ```{r}
 NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C)
@@ -196,4 +198,4 @@ write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/
 
 When we wrangle a raw dataset into a processed dataset, we create a code file that contains only the wrangling code. We then save the processed dataset as a new spreadsheet and then create a separate code file to analyze and visualize the dataset. Why do we keep the wrangling code separate from the analysis code?
 
-
+> Answer: For reproducibility and so you can recreate the processed code if it gets messed up. This is also useful if you want to send the processed data to someone else to run their own analysis.
