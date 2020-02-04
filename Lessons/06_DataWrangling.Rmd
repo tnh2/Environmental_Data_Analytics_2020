@@ -171,7 +171,7 @@ interval(first(NTL.phys.data.PeterPaul1$sampledate), last(NTL.phys.data.PeterPau
 ```
 
 
-## Pipes
+## Pipes (Requires dplyr)
 
 Sometimes we will want to perform multiple functions on a single dataset on our way to creating a processed dataset. We could do this in a series of subsequent functions or create a custom function. However, there is another method to do this that looks cleaner and is easier to read. This method is called a pipe. We designate a pipe with `%>%`. A good way to think about the function of a pipe is with the word "then." 
 
