@@ -123,7 +123,7 @@ EPAair_combined_Processed <- spread(EPAair_combined_daily, AQS_PARAMETER_DESC, m
 dim(EPAair_combined_Processed)
 
 #11 Save the file (note: I changed the name to ...NC1819... instead of NC1718 since we have years 2018 and 2019)
-write.csv(EPAair_combined_Processed, file = "../Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
+write.csv(EPAair_combined_Processed, row.names = FALSE, file = "../Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
 
 ```
 
