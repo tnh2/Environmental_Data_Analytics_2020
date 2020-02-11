@@ -1,0 +1,473 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Assignment 5: Data Visualization},
+  pdfauthor={Thomas Hancock},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Assignment 5: Data Visualization}
+\author{Thomas Hancock}
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{overview}{%
+\subsection{OVERVIEW}\label{overview}}
+
+This exercise accompanies the lessons in Environmental Data Analytics on
+Data Visualization
+
+\hypertarget{directions}{%
+\subsection{Directions}\label{directions}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Change ``Student Name'' on line 3 (above) with your name.
+\item
+  Work through the steps, \textbf{creating code and output} that fulfill
+  each instruction.
+\item
+  Be sure to \textbf{answer the questions} in this assignment document.
+\item
+  When you have completed the assignment, \textbf{Knit} the text and
+  code into a single PDF file.
+\item
+  After Knitting, submit the completed exercise (PDF file) to the
+  dropbox in Sakai. Add your last name into the file name (e.g.,
+  ``Salk\_A05\_DataVisualization.Rmd'') prior to submission.
+\end{enumerate}
+
+The completed exercise is due on Tuesday, February 11 at 1:00 pm.
+
+\hypertarget{set-up-your-session}{%
+\subsection{Set up your session}\label{set-up-your-session}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Set up your session. Verify your working directory and load the
+  tidyverse and cowplot packages. Upload the NTL-LTER processed data
+  files for nutrients and chemistry/physics for Peter and Paul Lakes
+  (tidy and gathered) and the processed data file for the Niwot Ridge
+  litter dataset.
+\item
+  Make sure R is reading dates as date format; if not change the format
+  to date.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#1}
+\KeywordTok{getwd}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "C:/Users/thoma/Thomas/2018 Grad School/Duke MEM/ENV 872/Environmental_Data_Analytics_2020"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------------------------- tidyverse 1.3.0 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.2.1     v purrr   0.3.3
+## v tibble  2.1.3     v dplyr   0.8.3
+## v tidyr   1.0.0     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.4.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(cowplot)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## ********************************************************
+\end{verbatim}
+
+\begin{verbatim}
+## Note: As of version 1.0.0, cowplot does not change the
+\end{verbatim}
+
+\begin{verbatim}
+##   default ggplot2 theme anymore. To recover the previous
+\end{verbatim}
+
+\begin{verbatim}
+##   behavior, execute:
+##   theme_set(theme_cowplot())
+\end{verbatim}
+
+\begin{verbatim}
+## ********************************************************
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(viridis)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: viridisLite
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load data}
+\NormalTok{NTL.PP.nut.tidy <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"}\NormalTok{)}
+\NormalTok{NTL.PP.nut.gathered <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaulGathered_Processed.csv"}\NormalTok{)}
+\NormalTok{NIWO.Litter <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv"}\NormalTok{)}
+
+\CommentTok{#2}
+\KeywordTok{class}\NormalTok{(NTL.PP.nut.tidy}\OperatorTok{$}\NormalTok{sampledate) }\CommentTok{# Check date format}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "factor"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Change dates to read as dates}
+\NormalTok{NTL.PP.nut.tidy}\OperatorTok{$}\NormalTok{sampledate <-}\StringTok{ }
+\StringTok{  }\KeywordTok{as.Date}\NormalTok{(NTL.PP.nut.tidy}\OperatorTok{$}\NormalTok{sampledate, }\DataTypeTok{format =} \StringTok{"%Y-%m-%d"}\NormalTok{)}
+\NormalTok{NTL.PP.nut.gathered}\OperatorTok{$}\NormalTok{sampledate <-}\StringTok{ }
+\StringTok{  }\KeywordTok{as.Date}\NormalTok{(NTL.PP.nut.gathered}\OperatorTok{$}\NormalTok{sampledate, }\DataTypeTok{format =} \StringTok{"%Y-%m-%d"}\NormalTok{)}
+\NormalTok{NIWO.Litter}\OperatorTok{$}\NormalTok{collectDate <-}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(NIWO.Litter}\OperatorTok{$}\NormalTok{collectDate, }\DataTypeTok{format =} \StringTok{"%Y-%m-%d"}\NormalTok{)}
+
+\KeywordTok{class}\NormalTok{(NTL.PP.nut.tidy}\OperatorTok{$}\NormalTok{sampledate) }\CommentTok{# Verify date format}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Date"
+\end{verbatim}
+
+\hypertarget{define-your-theme}{%
+\subsection{Define your theme}\label{define-your-theme}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Build a theme and set it as your default theme.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{myTheme <-}\StringTok{ }\KeywordTok{theme_classic}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{10}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{color =} \StringTok{"black"}\NormalTok{), }
+        \DataTypeTok{legend.position =} \StringTok{"top"}\NormalTok{) }\CommentTok{# Define a theme based off of the classic theme}
+
+\KeywordTok{theme_set}\NormalTok{(myTheme) }\CommentTok{# Set defined theme to default}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{create-graphs}{%
+\subsection{Create graphs}\label{create-graphs}}
+
+For numbers 4-7, create ggplot graphs and adjust aesthetics to follow
+best practices for data visualization. Ensure your theme, color
+palettes, axes, and additional aesthetics are edited accordingly.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  {[}NTL-LTER{]} Plot total phosphorus by phosphate, with separate
+  aesthetics for Peter and Paul lakes. Add a line of best fit and color
+  it black. Adjust your axes to hide extreme values.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ppPlot1 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(NTL.PP.nut.tidy, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ po4, }\DataTypeTok{y =}\NormalTok{ tp_ug)) }\OperatorTok{+}\StringTok{ }\CommentTok{# Plot of tp vs po4}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ lakename)) }\OperatorTok{+}\StringTok{ }\CommentTok{# Scatter plot with lakes as different shapes}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =}\NormalTok{ lm, }\DataTypeTok{color =} \StringTok{"black"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# Add linear best fit line}
+\StringTok{  }\KeywordTok{xlim}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{50}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# Limit x-axis to hide outliers}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Phosphate"}\NormalTok{, }\DataTypeTok{y =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Total Phosphorous ( "}\NormalTok{, mu, }\StringTok{"g/L)"}\NormalTok{)),}
+       \DataTypeTok{shape =} \StringTok{""}\NormalTok{) }\CommentTok{# Change axis and legend labels}
+
+\KeywordTok{print}\NormalTok{(ppPlot1 )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 21947 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 21947 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Hancock_A05_DataVisualization_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  {[}NTL-LTER{]} Make three separate boxplots of (a) temperature, (b)
+  TP, and (c) TN, with month as the x axis and lake as a color
+  aesthetic. Then, create a cowplot that combines the three graphs. Make
+  sure that only one legend is present and that graph axes are aligned.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Make Temperature boxplots}
+\NormalTok{ppTempPlot <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(NTL.PP.nut.tidy) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(month), }\DataTypeTok{y =}\NormalTok{ temperature_C, }\DataTypeTok{color =}\NormalTok{ lakename)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Month"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Temperature (C)"}\NormalTok{, }\DataTypeTok{color =} \StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"#0c2c84"}\NormalTok{, }\StringTok{"#ea6827ff"}\NormalTok{)) }\CommentTok{# Set colors}
+
+\CommentTok{#ppTempPlot # Used for debugging}
+
+\CommentTok{#Make Phosphorous boxplots}
+\NormalTok{ppTPPlot <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(NTL.PP.nut.tidy) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(month), }\DataTypeTok{y =}\NormalTok{ tp_ug, }\DataTypeTok{color =}\NormalTok{ lakename)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Month"}\NormalTok{, }\DataTypeTok{y =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Total Phosphorous ( "}\NormalTok{, mu, }\StringTok{"g/L)"}\NormalTok{))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"#0c2c84"}\NormalTok{, }\StringTok{"#ea6827ff"}\NormalTok{)) }\CommentTok{# Set colors}
+
+\CommentTok{# Make Nitrogen boxplots}
+\NormalTok{ppTNPlot <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(NTL.PP.nut.tidy) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(month), }\DataTypeTok{y =}\NormalTok{ tn_ug, }\DataTypeTok{color =}\NormalTok{ lakename)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Month"}\NormalTok{, }\DataTypeTok{y =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Total Nitrogen ( "}\NormalTok{, mu, }\StringTok{"g/L)"}\NormalTok{))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"#0c2c84"}\NormalTok{, }\StringTok{"#ea6827ff"}\NormalTok{)) }\CommentTok{# Set colors}
+
+\CommentTok{# Extract legend from one of the plots to include in combined cowplot}
+\NormalTok{ppLegend <-}\StringTok{ }\KeywordTok{get_legend}\NormalTok{(}
+\NormalTok{    ppTempPlot }\OperatorTok{+}\StringTok{ }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.box.margin =} \KeywordTok{margin}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{12}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 3566 rows containing non-finite values (stat_boxplot).
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Create a plot of the three sets of boxplots}
+\NormalTok{ppPlotGrid <-}\StringTok{ }\KeywordTok{plot_grid}\NormalTok{(ppTempPlot }\OperatorTok{+}\StringTok{ }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"none"}\NormalTok{), }\CommentTok{# Remove legends}
+\NormalTok{                        ppTPPlot }\OperatorTok{+}\StringTok{ }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"none"}\NormalTok{),}
+\NormalTok{                        ppTNPlot }\OperatorTok{+}\StringTok{ }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"none"}\NormalTok{),}
+                        \DataTypeTok{align =} \StringTok{'v'}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{1}\NormalTok{) }\CommentTok{# Align axes, limit to one column}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 3566 rows containing non-finite values (stat_boxplot).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 20729 rows containing non-finite values (stat_boxplot).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 21583 rows containing non-finite values (stat_boxplot).
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Create plot with boxplots and legend}
+\NormalTok{ppPlot2 <-}\StringTok{ }\KeywordTok{plot_grid}\NormalTok{(ppPlotGrid, ppLegend, }\DataTypeTok{ncol =} \DecValTok{1}\NormalTok{, }\DataTypeTok{rel_heights =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,.}\DecValTok{3}\NormalTok{))}
+\KeywordTok{print}\NormalTok{(ppPlot2)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Hancock_A05_DataVisualization_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+Question: What do you observe about the variables of interest over
+seasons and between lakes?
+
+\begin{quote}
+Answer: As would be expected, the median temperature for both lakes
+rises during the summer months and is lower towards both ends of the
+year (in the winter). There does not appear to be an appreciable
+difference between the temperatures of the two lakes. Total phosphorous
+is similar between the two lakes, but it seems like Peter Lake tends to
+have a slightly higher concentration, especially in later summer months.
+A similar pattern is seen regarding nitrogen concentration. Phosphorous
+and Nitrogen measurements were not taken for colder months for either
+lake.
+\end{quote}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\item
+  {[}Niwot Ridge{]} Plot a subset of the litter dataset by displaying
+  only the ``Needles'' functional group. Plot the dry mass of needle
+  litter by date and separate by NLCD class with a color aesthetic. (no
+  need to adjust the name of each land use)
+\item
+  {[}Niwot Ridge{]} Now, plot the same plot but with NLCD classes
+  separated into three facets rather than separated by color.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#6 NCLD classes separated by color}
+\NormalTok{nrPlot1 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{subset}\NormalTok{(NIWO.Litter, functionalGroup }\OperatorTok{==}\StringTok{ "Needles"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ collectDate, }\DataTypeTok{y =}\NormalTok{ dryMass, }\DataTypeTok{color =}\NormalTok{ nlcdClass)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date Collected"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Dry Mass (g)"}\NormalTok{, }\DataTypeTok{color =} \StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_viridis}\NormalTok{(}\DataTypeTok{discrete =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{end =} \FloatTok{0.8}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# Set color scheme}
+\StringTok{  }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{date_breaks =} \StringTok{"6 months"}\NormalTok{) }\CommentTok{# Change the breaks on the x-axis for readability}
+
+\KeywordTok{print}\NormalTok{(nrPlot1)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Hancock_A05_DataVisualization_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#nrPlot2 <- ggplot(subset(NIWO.Litter, functionalGroup == "Needles")) +}
+\CommentTok{#  geom_boxplot(aes(x = as.factor(collectDate), y = dryMass, color = nlcdClass)) +}
+\CommentTok{#  scale_color_viridis(discrete = TRUE, end = 0.8)}
+
+\CommentTok{#print(nrPlot2)}
+
+\CommentTok{# 7 NLCD Classes separated on different plots}
+\NormalTok{nrPlot3 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{subset}\NormalTok{(NIWO.Litter, functionalGroup }\OperatorTok{==}\StringTok{ "Needles"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ collectDate, }\DataTypeTok{y =}\NormalTok{ dryMass)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_grid}\NormalTok{(}\KeywordTok{vars}\NormalTok{(nlcdClass)) }\OperatorTok{+}\StringTok{ }\CommentTok{# Create facet grid based on NCLD Class}
+\StringTok{  }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{date_breaks =} \StringTok{"6 months"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# Change the breaks on the x-axis for readability}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date Collected"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Dry Mass (g)"}\NormalTok{)}
+
+\KeywordTok{print}\NormalTok{(nrPlot3)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Hancock_A05_DataVisualization_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+Question: Which of these plots (6 vs.~7) do you think is more effective,
+and why?
+
+\begin{quote}
+Answer: Plot 6 seems more effective because you can see the points
+side-by-side and on top of each other on the same set of axes. This
+format allows you to easily see how they compare to each other. In plot
+7, it is hard to really determine if the points in one NLCD class are
+relatively higher or lower than a different class unless there is
+extreme variation.
+\end{quote}
+
+\end{document}
