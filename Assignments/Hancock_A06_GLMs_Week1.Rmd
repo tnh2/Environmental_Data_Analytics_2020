@@ -1,0 +1,146 @@
+---
+title: "Assignment 6: GLMs week 1 (t-test and ANOVA)"
+author: "Thomas Hancock"
+output: pdf_document
+geometry: margin=2.54cm
+editor_options: 
+  chunk_output_type: console
+---
+
+## OVERVIEW
+
+This exercise accompanies the lessons in Environmental Data Analytics on t-tests and ANOVAs. 
+
+## Directions
+1. Change "Student Name" on line 3 (above) with your name.
+3. Work through the steps, **creating code and output** that fulfill each instruction.
+4. Be sure to **answer the questions** in this assignment document.
+6. When you have completed the assignment, **Knit** the text and code into a single PDF file.
+8. After Knitting, submit the completed exercise (PDF file) to the dropbox in Sakai. Add your last name into the file name (e.g., "Salk_A06_GLMs_Week1.Rmd") prior to submission.
+
+The completed exercise is due on Tuesday, February 18 at 1:00 pm.
+
+## Set up your session
+
+1. Check your working directory, load the `tidyverse`, `cowplot`, and `agricolae` packages, and import the NTL-LTER_Lake_Nutrients_PeterPaul_Processed.csv dataset. 
+
+2. Change the date column to a date format. Call up `head` of this column to verify.
+
+
+```{r, message = FALSE}
+#1 Load packages and input data
+#install.packages("agricolae")
+library(tidyverse)
+library(cowplot)
+library(agricolae)
+getwd()
+
+NTL.PP.Nutrients.Processed <-
+  read.csv("./Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaul_Processed.csv")
+
+
+#2 Set date format
+NTL.PP.Nutrients.Processed$sampledate <- as.Date(NTL.PP.Nutrients.Processed$sampledate,
+                                                 format = "%Y-%m-%d")
+head(NTL.PP.Nutrients.Processed$sampledate) # Check the first 6 values
+
+```
+
+
+## Wrangle your data
+
+3. Wrangle your dataset so that it contains only surface depths and only the years 1993-1996, inclusive. Set month as a factor.
+```{r}
+NTL.PP.Nut.Filtered <- filter(NTL.PP.Nutrients.Processed, year4 >= 1993 & year4 <= 1996,
+                              depth == 0.00) # Filter data for surface records in date range
+
+NTL.PP.Nut.Filtered$month <- as.factor(NTL.PP.Nut.Filtered$month) # Set month as a factor
+
+```
+
+## Analysis
+
+Peter Lake was manipulated with additions of nitrogen and phosphorus over the years 1993-1996 in an effort to assess the impacts of eutrophication in lakes. You are tasked with finding out if nutrients are significantly higher in Peter Lake than Paul Lake, and if these potential differences in nutrients vary seasonally (use month as a factor to represent seasonality). Run two separate tests for TN and TP.
+
+4. Which application of the GLM will you use (t-test, one-way ANOVA, two-way ANOVA with main effects, or two-way ANOVA with interaction effects)? Justify your choice.
+
+> Answer: I will use two-way ANOVA with interaction effects (months*lakename) because we are looking at whether the values vary by both lake and month (two factors), and we want to know if the differences between the lakes are affected by the month (interaction effect).
+
+5. Run your test for TN. Include examination of groupings and consider interaction effects, if relevant.
+
+6. Run your test for TP. Include examination of groupings and consider interaction effects, if relevant.
+
+```{r}
+#5
+tn.interaction <- with(NTL.PP.Nut.Filtered, interaction(lakename, month)) # Find interactions
+
+pp.tn.anova.2way <- aov(data = NTL.PP.Nut.Filtered, tn_ug ~ tn.interaction) # 2 Way ANOVA
+
+tn.groups <- HSD.test(pp.tn.anova.2way, "tn.interaction", group = TRUE) # Find stats groups
+tn.groups # Display statistical groups/letters
+
+#6
+tp.interaction <- with(NTL.PP.Nut.Filtered, interaction(lakename, month)) # Find interactions
+
+pp.tp.anova.2way <- aov(data = NTL.PP.Nut.Filtered, tp_ug ~ tp.interaction) # 2 Way ANOVA
+
+tp.groups <- HSD.test(pp.tp.anova.2way, "tp.interaction", group = TRUE) # Find stats groups
+tp.groups # Display statistical groups/letters
+
+
+```
+
+7. Create two plots, with TN (plot 1) or TP (plot 2) as the response variable and month and lake as the predictor variables. Hint: you may use some of the code you used for your visualization assignment. Assign groupings with letters, as determined from your tests. Adjust your axes, aesthetics, and color palettes in accordance with best data visualization practices.
+
+8. Combine your plots with cowplot, with a common legend at the top and the two graphs stacked vertically. Your x axes should be formatted with the same breaks, such that you can remove the title and text of the top legend and retain just the bottom legend. 
+
+```{r}
+#7
+
+myTheme <- theme_classic(base_size = 10) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top") # Define a theme based off of the classic theme
+
+theme_set(myTheme) # Set defined theme to default
+
+# Create a data frame of the statistical letters in the proper order
+tn.letters <- tn.groups$groups[match(levels(tn.interaction), rownames(tn.groups$groups)),]
+
+# Create plot for total nitrogen
+tn.anova.plot <- ggplot(NTL.PP.Nut.Filtered, aes(x = month, y = tn_ug, color = lakename)) +
+  geom_boxplot() +
+  labs(x = "Month", y = expression(paste("Total Nitrogen ( ", mu, "g/L)")), color = "") +
+  scale_color_viridis_d(option = "magma", begin = 0.3, end = 0.6) +
+  coord_cartesian(ylim = c(0,2500)) + # Expand y-axis to include the stat letters
+  stat_summary(geom = "text", fun.y = max, vjust = -1, size = 4, # Show stat letters
+               position = position_dodge(0.7), show.legend = FALSE,
+               label = c("ab", "b", "ab", "b", "a", "b", "a", "b", "ab", "ab"))
+
+print(tn.anova.plot)
+
+# Create a data frame of the statistical letters in the proper order
+tp.letters <- tp.groups$groups[match(levels(tp.interaction), rownames(tp.groups$groups)),]
+
+# Create plot for total phosphorous
+tp.anova.plot <- ggplot(NTL.PP.Nut.Filtered, aes(x = month, y = tp_ug, color = lakename)) +
+  geom_boxplot() +
+  labs(x = "Month", y = expression(paste("Total Phosphorous ( ", mu, "g/L)")), color = "") +
+  scale_color_viridis_d(option = "magma", begin = 0.3, end = 0.6) +
+  coord_cartesian(ylim = c(0,75)) + # Expand y-axis to include stat letters
+  stat_summary(geom = "text", fun.y = max, vjust = -1, size = 4, # Show stat letters
+               position = position_dodge(0.7), show.legend = FALSE,
+               label = c("bcd", "cd", "ab", "d", "a", "d", "abc", "d", "abcd", "cd"))
+
+print(tp.anova.plot)
+
+#8 Create Cowplot with common legend and common x-label (on the bottom)
+ppPlotGrid <- plot_grid(tn.anova.plot + xlab("") + theme(axis.text.x = element_blank()),
+                        tp.anova.plot + theme(legend.position = "none"),
+                        align = "v", ncol = 1, rel_heights = c(2,1.5))
+print(ppPlotGrid)
+
+```
+
+
+
+

@@ -1,0 +1,2157 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={11: Generalized Linear Models (ANOVA)},
+  pdfauthor={Environmental Data Analytics \textbar{} Kateri Salk},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{11: Generalized Linear Models (ANOVA)}
+\author{Environmental Data Analytics \textbar{} Kateri Salk}
+\date{Spring 2020}
+
+\begin{document}
+\maketitle
+
+\hypertarget{objectives}{%
+\subsection{Objectives}\label{objectives}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Apply special cases of the GLM (ANOVA) to real datasets
+\item
+  Interpret and report the results of ANOVA in publication-style formats
+\end{enumerate}
+
+\hypertarget{set-up}{%
+\subsection{Set up}\label{set-up}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{getwd}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "C:/Users/thoma/Thomas/2018 Grad School/Duke MEM/ENV 872/Environmental_Data_Analytics_2020"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(agricolae)}
+
+\NormalTok{Litter <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv"}\NormalTok{)}
+
+\CommentTok{# Set date to date format}
+\NormalTok{Litter}\OperatorTok{$}\NormalTok{collectDate <-}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(Litter}\OperatorTok{$}\NormalTok{collectDate , }\DataTypeTok{format =} \StringTok{"%Y-%m-%d"}\NormalTok{)}
+
+\CommentTok{# Set theme}
+\NormalTok{mytheme <-}\StringTok{ }\KeywordTok{theme_classic}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{14}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{color =} \StringTok{"black"}\NormalTok{), }
+        \DataTypeTok{legend.position =} \StringTok{"top"}\NormalTok{)}
+\KeywordTok{theme_set}\NormalTok{(mytheme) }\CommentTok{# Can you "save" a theme?}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{one-way-anova}{%
+\subsubsection{One-way ANOVA}\label{one-way-anova}}
+
+A one-way ANOVA is the same test in practice as a two-sample t-test but
+for three or more groups. In R, we can run the model with the function
+\texttt{lm} or \texttt{aov}, the latter of which which will allow us to
+run post-hoc tests to determine pairwise differences. ANOVA lets you
+know if there is significant difference between the group means (i.e.,
+is that grouping a significant predictor of output change).
+
+Does total litter biomass differ among sites at the Niwot Ridge LTER?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Wrangle the data}
+\NormalTok{Litter.Totals <-}\StringTok{ }\NormalTok{Litter }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(plotID, collectDate, nlcdClass) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# What does group_by do, exactly?}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{dryMass =} \KeywordTok{sum}\NormalTok{(dryMass))}
+
+\CommentTok{# Test for normality. }
+\CommentTok{# Note: the important assumption for GLMs is normality of residuals, }
+\CommentTok{# not necessarily normality of raw data. See below when we plot the model.}
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_040"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_040"]
+## W = 0.71852, p-value = 9.319e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_041"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_041"]
+## W = 0.75222, p-value = 0.0006757
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_046"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_046"]
+## W = 0.9464, p-value = 0.4021
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_047"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_047"]
+## W = 0.34128, p-value = 2.353e-07
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_051"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_051"]
+## W = 0.71303, p-value = 0.0002357
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_057"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_057"]
+## W = 0.92093, p-value = 0.1343
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_058"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_058"]
+## W = 0.82393, p-value = 0.0026
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_061"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_061"]
+## W = 0.81814, p-value = 0.002772
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_062"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_062"]
+## W = 0.87455, p-value = 0.01728
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_063"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_063"]
+## W = 0.70053, p-value = 8.099e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_064"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_064"]
+## W = 0.70383, p-value = 6.176e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass[Litter.Totals}\OperatorTok{$}\NormalTok{plotID }\OperatorTok{==}\StringTok{ "NIWO_067"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_067"]
+## W = 0.642, p-value = 4.147e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{qqnorm}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass); }\KeywordTok{qqline}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Test for equal variance}
+\CommentTok{# ANOVA is robust against departures from equal variance.}
+\KeywordTok{bartlett.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{Litter.Totals}\OperatorTok{$}\NormalTok{plotID)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Bartlett test of homogeneity of variances
+## 
+## data:  Litter.Totals$dryMass by Litter.Totals$plotID
+## Bartlett's K-squared = 158.67, df = 11, p-value < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Format ANOVA as aov}
+\NormalTok{Litter.Totals.anova <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter.Totals, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{plotID)}
+\KeywordTok{summary}\NormalTok{(Litter.Totals.anova)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              Df Sum Sq Mean Sq F value   Pr(>F)    
+## plotID       11   7584   689.5   4.813 1.45e-06 ***
+## Residuals   198  28363   143.2                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Format ANOVA as lm}
+\NormalTok{Litter.Totals.anova2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter.Totals, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{plotID)}
+\KeywordTok{summary}\NormalTok{(Litter.Totals.anova2) }\CommentTok{# In this case, intercept is first grouping (alphabetically)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = dryMass ~ plotID, data = Litter.Totals)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -18.586  -5.419  -1.529   1.964  59.821 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      15.680      2.746   5.711 4.08e-08 ***
+## plotIDNIWO_041    1.299      4.061   0.320 0.749396    
+## plotIDNIWO_046   -5.724      3.996  -1.432 0.153580    
+## plotIDNIWO_047  -11.204      4.134  -2.710 0.007315 ** 
+## plotIDNIWO_051  -10.011      4.061  -2.465 0.014546 *  
+## plotIDNIWO_057    5.006      3.937   1.272 0.205013    
+## plotIDNIWO_058  -13.282      3.883  -3.420 0.000760 ***
+## plotIDNIWO_061   -2.494      3.937  -0.633 0.527140    
+## plotIDNIWO_062  -12.632      3.883  -3.253 0.001342 ** 
+## plotIDNIWO_063  -13.286      3.937  -3.375 0.000888 ***
+## plotIDNIWO_064   -7.664      3.883  -1.974 0.049805 *  
+## plotIDNIWO_067   -3.114      4.061  -0.767 0.444110    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 11.97 on 198 degrees of freedom
+## Multiple R-squared:  0.211,  Adjusted R-squared:  0.1671 
+## F-statistic: 4.813 on 11 and 198 DF,  p-value: 1.452e-06
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Checking model fit and assumptions}
+\CommentTok{# ANOVA is robust against departures from normality.}
+\KeywordTok{plot}\NormalTok{(Litter.Totals.anova2) }\CommentTok{# Can you get it to plot just one of the plots?}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-2-2.pdf}
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-2-3.pdf}
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-2-4.pdf}
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-2-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Post-hoc test}
+\KeywordTok{TukeyHSD}\NormalTok{(Litter.Totals.anova) }\CommentTok{# Only works on "aov" object}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = dryMass ~ plotID, data = Litter.Totals)
+## 
+## $plotID
+##                            diff        lwr        upr     p adj
+## NIWO_041-NIWO_040   1.299062500 -12.133507 14.7316317 1.0000000
+## NIWO_046-NIWO_040  -5.723823529 -18.940183  7.4925361 0.9556786
+## NIWO_047-NIWO_040 -11.203666667 -24.877141  2.4698079 0.2291635
+## NIWO_051-NIWO_040 -10.011250000 -23.443819  3.4213192 0.3682118
+## NIWO_057-NIWO_040   5.005833333  -8.015326 18.0269931 0.9817155
+## NIWO_058-NIWO_040 -13.281578947 -26.125572 -0.4375861 0.0356138
+## NIWO_061-NIWO_040  -2.493888889 -15.515049 10.5272709 0.9999695
+## NIWO_062-NIWO_040 -12.632368421 -25.476361  0.2116244 0.0585895
+## NIWO_063-NIWO_040 -13.286111111 -26.307271 -0.2649514 0.0409036
+## NIWO_064-NIWO_040  -7.664210526 -20.508203  5.1797823 0.7105434
+## NIWO_067-NIWO_040  -3.114062500 -16.546632 10.3185067 0.9997965
+## NIWO_046-NIWO_041  -7.022886029 -20.811937  6.7661649 0.8732142
+## NIWO_047-NIWO_041 -12.502729167 -26.730507  1.7250490 0.1467092
+## NIWO_051-NIWO_041 -11.310312500 -25.306729  2.6861042 0.2478220
+## NIWO_057-NIWO_041   3.706770833  -9.895301 17.3088429 0.9990520
+## NIWO_058-NIWO_041 -14.580641447 -28.013211 -1.1480722 0.0207531
+## NIWO_061-NIWO_041  -3.792951389 -17.395023  9.8091207 0.9988277
+## NIWO_062-NIWO_041 -13.931430921 -27.364000 -0.4988617 0.0345161
+## NIWO_063-NIWO_041 -14.585173611 -28.187246 -0.9831015 0.0239137
+## NIWO_064-NIWO_041  -8.963273026 -22.395842  4.4692962 0.5465386
+## NIWO_067-NIWO_041  -4.413125000 -18.409542  9.5832917 0.9964654
+## NIWO_047-NIWO_046  -5.479843137 -19.503677  8.5439907 0.9792588
+## NIWO_051-NIWO_046  -4.287426471 -18.076477  9.5016245 0.9968732
+## NIWO_057-NIWO_046  10.729656863  -2.658943 24.1182569 0.2593203
+## NIWO_058-NIWO_046  -7.557755418 -20.774115  5.6586042 0.7631683
+## NIWO_061-NIWO_046   3.229934641 -10.158665 16.6185346 0.9997008
+## NIWO_062-NIWO_046  -6.908544892 -20.124904  6.3078147 0.8526955
+## NIWO_063-NIWO_046  -7.562287582 -20.950888  5.8263124 0.7772274
+## NIWO_064-NIWO_046  -1.940386997 -15.156747 11.2759726 0.9999980
+## NIWO_067-NIWO_046   2.609761029 -11.179290 16.3988120 0.9999730
+## NIWO_051-NIWO_047   1.192416667 -13.035361 15.4201948 1.0000000
+## NIWO_057-NIWO_047  16.209500000   2.369473 30.0495273 0.0078565
+## NIWO_058-NIWO_047  -2.077912281 -15.751387 11.5955623 0.9999972
+## NIWO_061-NIWO_047   8.709777778  -5.130249 22.5498050 0.6364556
+## NIWO_062-NIWO_047  -1.428701754 -15.102176 12.2447728 0.9999999
+## NIWO_063-NIWO_047  -2.082444444 -15.922472 11.7575828 0.9999975
+## NIWO_064-NIWO_047   3.539456140 -10.134018 17.2129307 0.9994142
+## NIWO_067-NIWO_047   8.089604167  -6.138174 22.3173823 0.7697669
+## NIWO_057-NIWO_051  15.017083333   1.415011 28.6191554 0.0169404
+## NIWO_058-NIWO_051  -3.270328947 -16.702898 10.1622403 0.9996733
+## NIWO_061-NIWO_051   7.517361111  -6.084711 21.1194332 0.8006609
+## NIWO_062-NIWO_051  -2.621118421 -16.053688 10.8114508 0.9999632
+## NIWO_063-NIWO_051  -3.274861111 -16.876933 10.3272110 0.9997065
+## NIWO_064-NIWO_051   2.347039474 -11.085530 15.7796087 0.9999880
+## NIWO_067-NIWO_051   6.897187500  -7.099229 20.8936042 0.8959904
+## NIWO_058-NIWO_057 -18.287412281 -31.308572 -5.2662525 0.0003779
+## NIWO_061-NIWO_057  -7.499722222 -20.695670  5.6962260 0.7702539
+## NIWO_062-NIWO_057 -17.638201754 -30.659361 -4.6170420 0.0007554
+## NIWO_063-NIWO_057 -18.291944444 -31.487893 -5.0959962 0.0004883
+## NIWO_064-NIWO_057 -12.670043860 -25.691204  0.3511159 0.0646857
+## NIWO_067-NIWO_057  -8.119895833 -21.721968  5.4821763 0.7100063
+## NIWO_061-NIWO_058  10.787690058  -2.233470 23.8088498 0.2148146
+## NIWO_062-NIWO_058   0.649210526 -12.194782 13.4932034 1.0000000
+## NIWO_063-NIWO_058  -0.004532164 -13.025692 13.0166276 1.0000000
+## NIWO_064-NIWO_058   5.617368421  -7.226624 18.4613613 0.9525183
+## NIWO_067-NIWO_058  10.167516447  -3.265053 23.6000857 0.3439343
+## NIWO_062-NIWO_061 -10.138479532 -23.159639  2.8826802 0.3009668
+## NIWO_063-NIWO_061 -10.792222222 -23.988170  2.4037260 0.2316348
+## NIWO_064-NIWO_061  -5.170321637 -18.191481  7.8508381 0.9765523
+## NIWO_067-NIWO_061  -0.620173611 -14.222246 12.9818985 1.0000000
+## NIWO_063-NIWO_062  -0.653742690 -13.674902 12.3674170 1.0000000
+## NIWO_064-NIWO_062   4.968157895  -7.875835 17.8121507 0.9808216
+## NIWO_067-NIWO_062   9.518305921  -3.914263 22.9508752 0.4494776
+## NIWO_064-NIWO_063   5.621900585  -7.399259 18.6430603 0.9566352
+## NIWO_067-NIWO_063  10.172048611  -3.430023 23.7741207 0.3628551
+## NIWO_067-NIWO_064   4.550148026  -8.882421 17.9827173 0.9934557
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Extract groupings for pairwise relationships - shows which statistical group a level is in (levels in the same group are not statistically different from each other)}
+\NormalTok{Litter.Totals.groups <-}\StringTok{ }\KeywordTok{HSD.test}\NormalTok{(Litter.Totals.anova, }\StringTok{"plotID"}\NormalTok{, }\DataTypeTok{group =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{Litter.Totals.groups}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $statistics
+##    MSerror  Df    Mean       CV
+##   143.2479 198 9.55381 125.2759
+## 
+## $parameters
+##    test name.t ntr StudentizedRange alpha
+##   Tukey plotID  12         4.677704  0.05
+## 
+## $means
+##            dryMass       std  r   Min    Max     Q25     Q50      Q75
+## NIWO_040 15.680000 17.127210 19 2.485 74.770 5.23750  9.7250 22.32500
+## NIWO_041 16.979063 19.748656 16 0.990 76.800 4.38875  9.7950 20.84750
+## NIWO_046  9.956176  6.125677 17 0.455 22.010 5.08500  9.8200 12.52000
+## NIWO_047  4.476333 14.224853 15 0.015 55.720 0.14500  0.3650  1.47500
+## NIWO_051  5.668750  8.158336 16 0.005 28.040 0.46000  1.8350  6.71625
+## NIWO_057 20.685833 15.634036 18 2.100 53.040 9.11250 16.3300 31.77125
+## NIWO_058  2.398421  1.636032 19 0.385  7.045 1.56000  1.7750  2.98500
+## NIWO_061 13.186111 13.620037 18 1.010 42.120 2.94125  6.8450 21.11125
+## NIWO_062  3.047632  2.666352 19 0.060 10.095 1.32250  2.1900  3.93500
+## NIWO_063  2.393889  3.068145 18 0.310 10.185 0.46125  0.9425  2.46625
+## NIWO_064  8.015789  8.517745 19 1.000 31.985 2.93500  5.9650  8.74000
+## NIWO_067 12.565938 16.021432 16 0.990 67.460 3.93125  8.7950 14.59375
+## 
+## $comparison
+## NULL
+## 
+## $groups
+##            dryMass groups
+## NIWO_057 20.685833      a
+## NIWO_041 16.979063     ab
+## NIWO_040 15.680000    abc
+## NIWO_061 13.186111   abcd
+## NIWO_067 12.565938   abcd
+## NIWO_046  9.956176   abcd
+## NIWO_064  8.015789   abcd
+## NIWO_051  5.668750    bcd
+## NIWO_047  4.476333    bcd
+## NIWO_062  3.047632     cd
+## NIWO_058  2.398421      d
+## NIWO_063  2.393889      d
+## 
+## attr(,"class")
+## [1] "group"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Graph the results}
+\NormalTok{Litter.Totals.plot <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(Litter.Totals, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ plotID, }\DataTypeTok{y =}\NormalTok{ dryMass)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_summary}\NormalTok{(}\DataTypeTok{geom =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{fun.y =}\NormalTok{ max, }\DataTypeTok{vjust =} \DecValTok{-1}\NormalTok{, }\DataTypeTok{size =} \FloatTok{3.5}\NormalTok{,}
+               \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"abc"}\NormalTok{, }\StringTok{"ab"}\NormalTok{, }\StringTok{"abcd"}\NormalTok{, }\StringTok{"bcd"}\NormalTok{, }\StringTok{"bcd"}\NormalTok{, }\StringTok{"a"}\NormalTok{, }
+                         \StringTok{"d"}\NormalTok{, }\StringTok{"abcd"}\NormalTok{, }\StringTok{"cd"}\NormalTok{, }\StringTok{"d"}\NormalTok{, }\StringTok{"abcd"}\NormalTok{, }\StringTok{"abcd"}\NormalTok{)) }\OperatorTok{+}\StringTok{ }\CommentTok{# Assign labels in the order it will be on the plot}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Plot ID"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Dry Mass (g)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{85}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(Litter.Totals.plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-2-6.pdf}
+
+What information does the output give us? How might we report this
+information in a report?
+
+\begin{quote}
+Total litter biomass differs significantly among sites at the Niwot
+Ridge LTER (Figure 1; ANOVA, F11,198 = 4.813, p \textless{} 0.0001).
+\end{quote}
+
+\hypertarget{non-parametric-equivalent-of-anova-kruskal-wallis-test}{%
+\subsubsection{Non-parametric equivalent of ANOVA: Kruskal-Wallis
+Test}\label{non-parametric-equivalent-of-anova-kruskal-wallis-test}}
+
+As with the Wilcoxon test, the Kruskal-Wallis test is the non-parametric
+counterpart to the one-way ANOVA. Here, the data from two or more
+independent samples are replaced with their ranks without regard to the
+grouping AND based on the between-group sum of squares calculations.
+
+For multiple comparisons, a p-value \textless{} 0.05 indicates that
+there is a significant difference between groups, but it does not
+indicate which groups, or in this case, months, differ from each other.
+
+To analyze specific pairs in the data, you must use a \emph{post hoc}
+test. These include the Dunn's test, a pairwise Mann-Whitney with the
+Bonferroni correction, or the Conover-Iman test.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Litter.kw <-}\StringTok{ }\KeywordTok{kruskal.test}\NormalTok{(Litter.Totals}\OperatorTok{$}\NormalTok{dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{Litter.Totals}\OperatorTok{$}\NormalTok{plotID)}
+\NormalTok{Litter.kw}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  Litter.Totals$dryMass by Litter.Totals$plotID
+## Kruskal-Wallis chi-squared = 85.273, df = 11, p-value = 1.398e-13
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# There are two functions to run the Dunn Test}
+\CommentTok{# dunn.test(Litter.Totals$dryMass, Litter.Totals$plotID, kw = T, }
+\CommentTok{#           table = F, list = T, method = "holm", altp = T)   #From package dunn.test}
+\CommentTok{# dunnTest(Litter.Totals$dryMass, Litter.Totals$plotID)                    #From package FSA}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{two-way-anova}{%
+\subsection{TWO-WAY ANOVA}\label{two-way-anova}}
+
+\hypertarget{main-effects}{%
+\subsubsection{Main effects}\label{main-effects}}
+
+A two-way ANOVA allows us to examine the effects of two categorical
+explanatory variables on a continuous response variable. What if we
+wanted to know how litter masses varied across functional groups and
+land cover class?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Format as aov}
+\NormalTok{Litter.anova}\FloatTok{.2}\NormalTok{way <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{functionalGroup }\OperatorTok{+}\StringTok{ }\NormalTok{nlcdClass)}
+\KeywordTok{summary}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                   Df Sum Sq Mean Sq F value   Pr(>F)    
+## functionalGroup    7   6193   884.7  71.540  < 2e-16 ***
+## nlcdClass          2    223   111.7   9.033 0.000125 ***
+## Residuals       1682  20800    12.4                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Format as lm}
+\NormalTok{Litter.anova}\FloatTok{.2}\NormalTok{way2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{functionalGroup }\OperatorTok{+}\StringTok{ }\NormalTok{nlcdClass)}
+\KeywordTok{summary}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = dryMass ~ functionalGroup + nlcdClass, data = Litter)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -5.487 -0.784 -0.208  0.259 48.738 
+## 
+## Coefficients:
+##                                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                    0.523322   0.263954   1.983 0.047571 *  
+## functionalGroupLeaves          0.002287   0.335011   0.007 0.994554    
+## functionalGroupMixed           1.647412   0.417281   3.948 8.21e-05 ***
+## functionalGroupNeedles         5.654391   0.329491  17.161  < 2e-16 ***
+## functionalGroupOther           0.037433   0.337609   0.111 0.911728    
+## functionalGroupSeeds          -0.005358   0.338383  -0.016 0.987370    
+## functionalGroupTwigs/branches  1.120138   0.332841   3.365 0.000782 ***
+## functionalGroupWoody material  0.466337   0.330164   1.412 0.158005    
+## nlcdClassgrasslandHerbaceous  -0.685663   0.230666  -2.973 0.002995 ** 
+## nlcdClassshrubScrub           -0.782095   0.193758  -4.036 5.67e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.517 on 1682 degrees of freedom
+## Multiple R-squared:  0.2357, Adjusted R-squared:  0.2317 
+## F-statistic: 57.65 on 9 and 1682 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Run a post-hoc test for pairwise differences}
+\KeywordTok{TukeyHSD}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = dryMass ~ functionalGroup + nlcdClass, data = Litter)
+## 
+## $functionalGroup
+##                                       diff         lwr         upr     p adj
+## Leaves-Flowers                -0.014519444 -1.03108186  1.00204297 1.0000000
+## Mixed-Flowers                  1.709115566  0.44356059  2.97467054 0.0011317
+## Needles-Flowers                5.657419606  4.65752186  6.65731735 0.0000000
+## Other-Flowers                  0.027849771 -0.99667539  1.05237493 1.0000000
+## Seeds-Flowers                 -0.012152778 -1.03903588  1.01473033 1.0000000
+## Twigs/branches-Flowers         1.118146645  0.10807127  2.12822202 0.0181336
+## Woody material-Flowers         0.483062238 -0.51881096  1.48493544 0.8269243
+## Mixed-Leaves                   1.723635010  0.46643987  2.98083015 0.0008712
+## Needles-Leaves                 5.671939050  4.68264348  6.66123462 0.0000000
+## Other-Leaves                   0.042369215 -0.97181126  1.05654969 1.0000000
+## Seeds-Leaves                   0.002366667 -1.01419574  1.01892908 1.0000000
+## Twigs/branches-Leaves          1.132666089  0.13308494  2.13224724 0.0138750
+## Woody material-Leaves          0.497581683 -0.49371047  1.48887383 0.7949699
+## Needles-Mixed                  3.948304040  2.70454523  5.19206285 0.0000000
+## Other-Mixed                   -1.681265795 -2.94490826 -0.41762333 0.0014542
+## Seeds-Mixed                   -1.721268344 -2.98682332 -0.45571337 0.0010019
+## Twigs/branches-Mixed          -0.590968921 -1.84292449  0.66098664 0.8421896
+## Woody material-Mixed          -1.226053328 -2.47140082  0.01929417 0.0572676
+## Other-Needles                 -5.629569835 -6.62704585 -4.63209382 0.0000000
+## Seeds-Needles                 -5.669572384 -6.66947013 -4.66967464 0.0000000
+## Twigs/branches-Needles        -4.539272961 -5.52190150 -3.55664442 0.0000000
+## Woody material-Needles        -5.174357367 -6.14855268 -4.20016206 0.0000000
+## Seeds-Other                   -0.040002548 -1.06452771  0.98452261 1.0000000
+## Twigs/branches-Other           1.090296874  0.08261877  2.09797498 0.0232567
+## Woody material-Other           0.455212468 -0.54424379  1.45466872 0.8655279
+## Twigs/branches-Seeds           1.130299423  0.12022405  2.14037480 0.0160473
+## Woody material-Seeds           0.495215016 -0.50665818  1.49708822 0.8076616
+## Woody material-Twigs/branches -0.635084407 -1.61972305  0.34955424 0.5113474
+## 
+## $nlcdClass
+##                                            diff        lwr        upr     p adj
+## grasslandHerbaceous-evergreenForest -0.68360994 -1.2242079 -0.1430120 0.0085817
+## shrubScrub-evergreenForest          -0.78026426 -1.2343255 -0.3262030 0.0001714
+## shrubScrub-grasslandHerbaceous      -0.09665431 -0.6283874  0.4350788 0.9046605
+\end{verbatim}
+
+\hypertarget{interaction-effects}{%
+\subsubsection{Interaction effects}\label{interaction-effects}}
+
+We may expect the effects of functional group and land cover to be
+dependent on each other. For instance, we may expect needle biomass to
+be larger in evergreen forests than in other land types. In this case,
+we might choose to run an interaction effects two-way ANOVA, which will
+examine the individual effects of the explanatory variables as well as
+the interaction of the explanatory variables.
+
+The output gives test statistics for each explanatory variable as well
+as the interaction effect of the explanatory variables. If the p-value
+for the interaction effect is less than 0.05, then we would consider the
+interaction among the explanatory variables to be significant.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Format as aov}
+\NormalTok{Litter.anova}\FloatTok{.2}\NormalTok{way3 <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{functionalGroup }\OperatorTok{*}\StringTok{ }\NormalTok{nlcdClass)}
+\KeywordTok{summary}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                             Df Sum Sq Mean Sq F value   Pr(>F)    
+## functionalGroup              7   6193   884.7  72.445  < 2e-16 ***
+## nlcdClass                    2    223   111.7   9.147 0.000112 ***
+## functionalGroup:nlcdClass   14    431    30.8   2.521 0.001444 ** 
+## Residuals                 1668  20369    12.2                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Format as lm}
+\NormalTok{Litter.anova}\FloatTok{.2}\NormalTok{way4 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{functionalGroup }\OperatorTok{*}\StringTok{ }\NormalTok{nlcdClass)}
+\KeywordTok{summary}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = dryMass ~ functionalGroup * nlcdClass, data = Litter)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -6.612 -0.480 -0.058 -0.005 49.051 
+## 
+## Coefficients:
+##                                                            Estimate Std. Error
+## (Intercept)                                                 0.11963    0.39070
+## functionalGroupLeaves                                      -0.10360    0.55606
+## functionalGroupMixed                                        1.50475    0.63800
+## functionalGroupNeedles                                      7.31226    0.53696
+## functionalGroupOther                                       -0.03482    0.55606
+## functionalGroupSeeds                                       -0.04616    0.55606
+## functionalGroupTwigs/branches                               1.95967    0.54434
+## functionalGroupWoody material                               1.08431    0.53156
+## nlcdClassgrasslandHerbaceous                               -0.11420    0.64223
+## nlcdClassshrubScrub                                        -0.10412    0.53838
+## functionalGroupLeaves:nlcdClassgrasslandHerbaceous          0.12865    0.89410
+## functionalGroupMixed:nlcdClassgrasslandHerbaceous          -0.38118    1.13024
+## functionalGroupNeedles:nlcdClassgrasslandHerbaceous        -2.13880    0.87993
+## functionalGroupOther:nlcdClassgrasslandHerbaceous           0.12606    0.90743
+## functionalGroupSeeds:nlcdClassgrasslandHerbaceous           0.04615    0.90743
+## functionalGroupTwigs/branches:nlcdClassgrasslandHerbaceous -1.01519    0.89462
+## functionalGroupWoody material:nlcdClassgrasslandHerbaceous -1.04086    0.88971
+## functionalGroupLeaves:nlcdClassshrubScrub                   0.14703    0.75915
+## functionalGroupMixed:nlcdClassshrubScrub                    0.74593    0.93038
+## functionalGroupNeedles:nlcdClassshrubScrub                 -2.92148    0.74258
+## functionalGroupOther:nlcdClassshrubScrub                    0.08589    0.76101
+## functionalGroupSeeds:nlcdClassshrubScrub                    0.05944    0.76295
+## functionalGroupTwigs/branches:nlcdClassshrubScrub          -1.49559    0.74881
+## functionalGroupWoody material:nlcdClassshrubScrub          -0.97185    0.73957
+##                                                            t value Pr(>|t|)    
+## (Intercept)                                                  0.306 0.759502    
+## functionalGroupLeaves                                       -0.186 0.852224    
+## functionalGroupMixed                                         2.359 0.018462 *  
+## functionalGroupNeedles                                      13.618  < 2e-16 ***
+## functionalGroupOther                                        -0.063 0.950081    
+## functionalGroupSeeds                                        -0.083 0.933846    
+## functionalGroupTwigs/branches                                3.600 0.000327 ***
+## functionalGroupWoody material                                2.040 0.041519 *  
+## nlcdClassgrasslandHerbaceous                                -0.178 0.858888    
+## nlcdClassshrubScrub                                         -0.193 0.846673    
+## functionalGroupLeaves:nlcdClassgrasslandHerbaceous           0.144 0.885611    
+## functionalGroupMixed:nlcdClassgrasslandHerbaceous           -0.337 0.735969    
+## functionalGroupNeedles:nlcdClassgrasslandHerbaceous         -2.431 0.015177 *  
+## functionalGroupOther:nlcdClassgrasslandHerbaceous            0.139 0.889531    
+## functionalGroupSeeds:nlcdClassgrasslandHerbaceous            0.051 0.959441    
+## functionalGroupTwigs/branches:nlcdClassgrasslandHerbaceous  -1.135 0.256634    
+## functionalGroupWoody material:nlcdClassgrasslandHerbaceous  -1.170 0.242213    
+## functionalGroupLeaves:nlcdClassshrubScrub                    0.194 0.846453    
+## functionalGroupMixed:nlcdClassshrubScrub                     0.802 0.422814    
+## functionalGroupNeedles:nlcdClassshrubScrub                  -3.934 8.69e-05 ***
+## functionalGroupOther:nlcdClassshrubScrub                     0.113 0.910155    
+## functionalGroupSeeds:nlcdClassshrubScrub                     0.078 0.937915    
+## functionalGroupTwigs/branches:nlcdClassshrubScrub           -1.997 0.045956 *  
+## functionalGroupWoody material:nlcdClassshrubScrub           -1.314 0.189001    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.494 on 1668 degrees of freedom
+## Multiple R-squared:  0.2516, Adjusted R-squared:  0.2413 
+## F-statistic: 24.38 on 23 and 1668 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+If the interaction is significant, we interpret pairwise differences for
+the interaction. If the interaction is not significant, we interpret
+differences for the main effects only.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Run a post-hoc test for pairwise differences}
+\KeywordTok{TukeyHSD}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = dryMass ~ functionalGroup * nlcdClass, data = Litter)
+## 
+## $functionalGroup
+##                                       diff         lwr        upr     p adj
+## Leaves-Flowers                -0.014519444 -1.02471810  0.9956792 1.0000000
+## Mixed-Flowers                  1.709115566  0.45148307  2.9667481 0.0010161
+## Needles-Flowers                5.657419606  4.66378130  6.6510579 0.0000000
+## Other-Flowers                  0.027849771 -0.99026179  1.0459613 1.0000000
+## Seeds-Flowers                 -0.012152778 -1.03260752  1.0083020 1.0000000
+## Twigs/branches-Flowers         1.118146645  0.11439442  2.1218989 0.0168974
+## Woody material-Flowers         0.483062238 -0.51253916  1.4786636 0.8221892
+## Mixed-Leaves                   1.723635010  0.47431001  2.9729600 0.0007796
+## Needles-Leaves                 5.671939050  4.68883655  6.6550416 0.0000000
+## Other-Leaves                   0.042369215 -0.96546241  1.0502008 1.0000000
+## Seeds-Leaves                   0.002366667 -1.00783199  1.0125653 1.0000000
+## Twigs/branches-Leaves          1.132666089  0.13934239  2.1259898 0.0128809
+## Woody material-Leaves          0.497581683 -0.48750490  1.4826683 0.7896098
+## Needles-Mixed                  3.948304040  2.71233125  5.1842768 0.0000000
+## Other-Mixed                   -1.681265795 -2.93699776 -0.4255338 0.0013099
+## Seeds-Mixed                   -1.721268344 -2.97890084 -0.4636358 0.0008982
+## Twigs/branches-Mixed          -0.590968921 -1.83508715  0.6531493 0.8377747
+## Woody material-Mixed          -1.226053328 -2.46360485  0.0114982 0.0542582
+## Other-Needles                 -5.629569835 -6.62080157 -4.6383381 0.0000000
+## Seeds-Needles                 -5.669572384 -6.66321069 -4.6759341 0.0000000
+## Twigs/branches-Needles        -4.539272961 -5.51575017 -3.5627957 0.0000000
+## Woody material-Needles        -5.174357367 -6.14245414 -4.2062606 0.0000000
+## Seeds-Other                   -0.040002548 -1.05811410  0.9781090 1.0000000
+## Twigs/branches-Other           1.090296874  0.08892692  2.0916668 0.0217473
+## Woody material-Other           0.455212468 -0.53798711  1.4484120 0.8616311
+## Twigs/branches-Seeds           1.130299423  0.12654720  2.1340516 0.0149277
+## Woody material-Seeds           0.495215016 -0.50038638  1.4908164 0.8025426
+## Woody material-Twigs/branches -0.635084407 -1.61355913  0.3433903 0.5028434
+## 
+## $nlcdClass
+##                                            diff        lwr        upr     p adj
+## grasslandHerbaceous-evergreenForest -0.68360994 -1.2208220 -0.1463979 0.0080895
+## shrubScrub-evergreenForest          -0.78026426 -1.2314816 -0.3290469 0.0001541
+## shrubScrub-grasslandHerbaceous      -0.09665431 -0.6250571  0.4317485 0.9035143
+## 
+## $`functionalGroup:nlcdClass`
+##                                                                                diff
+## Leaves:evergreenForest-Flowers:evergreenForest                        -1.035994e-01
+## Mixed:evergreenForest-Flowers:evergreenForest                          1.504750e+00
+## Needles:evergreenForest-Flowers:evergreenForest                        7.312264e+00
+## Other:evergreenForest-Flowers:evergreenForest                         -3.481731e-02
+## Seeds:evergreenForest-Flowers:evergreenForest                         -4.616346e-02
+## Twigs/branches:evergreenForest-Flowers:evergreenForest                 1.959669e+00
+## Woody material:evergreenForest-Flowers:evergreenForest                 1.084311e+00
+## Flowers:grasslandHerbaceous-Flowers:evergreenForest                   -1.141995e-01
+## Leaves:grasslandHerbaceous-Flowers:evergreenForest                    -8.915330e-02
+## Mixed:grasslandHerbaceous-Flowers:evergreenForest                      1.009375e+00
+## Needles:grasslandHerbaceous-Flowers:evergreenForest                    5.059264e+00
+## Other:grasslandHerbaceous-Flowers:evergreenForest                     -2.295833e-02
+## Seeds:grasslandHerbaceous-Flowers:evergreenForest                     -1.142083e-01
+## Twigs/branches:grasslandHerbaceous-Flowers:evergreenForest             8.302750e-01
+## Woody material:grasslandHerbaceous-Flowers:evergreenForest            -7.074745e-02
+## Flowers:shrubScrub-Flowers:evergreenForest                            -1.041194e-01
+## Leaves:shrubScrub-Flowers:evergreenForest                             -6.068883e-02
+## Mixed:shrubScrub-Flowers:evergreenForest                               2.146559e+00
+## Needles:shrubScrub-Flowers:evergreenForest                             4.286664e+00
+## Other:shrubScrub-Flowers:evergreenForest                              -5.304891e-02
+## Seeds:shrubScrub-Flowers:evergreenForest                              -9.084722e-02
+## Twigs/branches:shrubScrub-Flowers:evergreenForest                      3.599583e-01
+## Woody material:shrubScrub-Flowers:evergreenForest                      8.343750e-03
+## Mixed:evergreenForest-Leaves:evergreenForest                           1.608349e+00
+## Needles:evergreenForest-Leaves:evergreenForest                         7.415863e+00
+## Other:evergreenForest-Leaves:evergreenForest                           6.878205e-02
+## Seeds:evergreenForest-Leaves:evergreenForest                           5.743590e-02
+## Twigs/branches:evergreenForest-Leaves:evergreenForest                  2.063268e+00
+## Woody material:evergreenForest-Leaves:evergreenForest                  1.187911e+00
+## Flowers:grasslandHerbaceous-Leaves:evergreenForest                    -1.060011e-02
+## Leaves:grasslandHerbaceous-Leaves:evergreenForest                      1.444606e-02
+## Mixed:grasslandHerbaceous-Leaves:evergreenForest                       1.112974e+00
+## Needles:grasslandHerbaceous-Leaves:evergreenForest                     5.162863e+00
+## Other:grasslandHerbaceous-Leaves:evergreenForest                       8.064103e-02
+## Seeds:grasslandHerbaceous-Leaves:evergreenForest                      -1.060897e-02
+## Twigs/branches:grasslandHerbaceous-Leaves:evergreenForest              9.338744e-01
+## Woody material:grasslandHerbaceous-Leaves:evergreenForest              3.285191e-02
+## Flowers:shrubScrub-Leaves:evergreenForest                             -5.200230e-04
+## Leaves:shrubScrub-Leaves:evergreenForest                               4.291053e-02
+## Mixed:shrubScrub-Leaves:evergreenForest                                2.250159e+00
+## Needles:shrubScrub-Leaves:evergreenForest                              4.390263e+00
+## Other:shrubScrub-Leaves:evergreenForest                                5.055045e-02
+## Seeds:shrubScrub-Leaves:evergreenForest                                1.275214e-02
+## Twigs/branches:shrubScrub-Leaves:evergreenForest                       4.635577e-01
+## Woody material:shrubScrub-Leaves:evergreenForest                       1.119431e-01
+## Needles:evergreenForest-Mixed:evergreenForest                          5.807514e+00
+## Other:evergreenForest-Mixed:evergreenForest                           -1.539567e+00
+## Seeds:evergreenForest-Mixed:evergreenForest                           -1.550913e+00
+## Twigs/branches:evergreenForest-Mixed:evergreenForest                   4.549191e-01
+## Woody material:evergreenForest-Mixed:evergreenForest                  -4.204388e-01
+## Flowers:grasslandHerbaceous-Mixed:evergreenForest                     -1.618949e+00
+## Leaves:grasslandHerbaceous-Mixed:evergreenForest                      -1.593903e+00
+## Mixed:grasslandHerbaceous-Mixed:evergreenForest                       -4.953750e-01
+## Needles:grasslandHerbaceous-Mixed:evergreenForest                      3.554514e+00
+## Other:grasslandHerbaceous-Mixed:evergreenForest                       -1.527708e+00
+## Seeds:grasslandHerbaceous-Mixed:evergreenForest                       -1.618958e+00
+## Twigs/branches:grasslandHerbaceous-Mixed:evergreenForest              -6.744750e-01
+## Woody material:grasslandHerbaceous-Mixed:evergreenForest              -1.575497e+00
+## Flowers:shrubScrub-Mixed:evergreenForest                              -1.608869e+00
+## Leaves:shrubScrub-Mixed:evergreenForest                               -1.565439e+00
+## Mixed:shrubScrub-Mixed:evergreenForest                                 6.418092e-01
+## Needles:shrubScrub-Mixed:evergreenForest                               2.781914e+00
+## Other:shrubScrub-Mixed:evergreenForest                                -1.557799e+00
+## Seeds:shrubScrub-Mixed:evergreenForest                                -1.595597e+00
+## Twigs/branches:shrubScrub-Mixed:evergreenForest                       -1.144792e+00
+## Woody material:shrubScrub-Mixed:evergreenForest                       -1.496406e+00
+## Other:evergreenForest-Needles:evergreenForest                         -7.347081e+00
+## Seeds:evergreenForest-Needles:evergreenForest                         -7.358427e+00
+## Twigs/branches:evergreenForest-Needles:evergreenForest                -5.352595e+00
+## Woody material:evergreenForest-Needles:evergreenForest                -6.227953e+00
+## Flowers:grasslandHerbaceous-Needles:evergreenForest                   -7.426463e+00
+## Leaves:grasslandHerbaceous-Needles:evergreenForest                    -7.401417e+00
+## Mixed:grasslandHerbaceous-Needles:evergreenForest                     -6.302889e+00
+## Needles:grasslandHerbaceous-Needles:evergreenForest                   -2.253000e+00
+## Other:grasslandHerbaceous-Needles:evergreenForest                     -7.335222e+00
+## Seeds:grasslandHerbaceous-Needles:evergreenForest                     -7.426472e+00
+## Twigs/branches:grasslandHerbaceous-Needles:evergreenForest            -6.481989e+00
+## Woody material:grasslandHerbaceous-Needles:evergreenForest            -7.383011e+00
+## Flowers:shrubScrub-Needles:evergreenForest                            -7.416383e+00
+## Leaves:shrubScrub-Needles:evergreenForest                             -7.372953e+00
+## Mixed:shrubScrub-Needles:evergreenForest                              -5.165705e+00
+## Needles:shrubScrub-Needles:evergreenForest                            -3.025600e+00
+## Other:shrubScrub-Needles:evergreenForest                              -7.365313e+00
+## Seeds:shrubScrub-Needles:evergreenForest                              -7.403111e+00
+## Twigs/branches:shrubScrub-Needles:evergreenForest                     -6.952306e+00
+## Woody material:shrubScrub-Needles:evergreenForest                     -7.303920e+00
+## Seeds:evergreenForest-Other:evergreenForest                           -1.134615e-02
+## Twigs/branches:evergreenForest-Other:evergreenForest                   1.994486e+00
+## Woody material:evergreenForest-Other:evergreenForest                   1.119128e+00
+## Flowers:grasslandHerbaceous-Other:evergreenForest                     -7.938216e-02
+## Leaves:grasslandHerbaceous-Other:evergreenForest                      -5.433599e-02
+## Mixed:grasslandHerbaceous-Other:evergreenForest                        1.044192e+00
+## Needles:grasslandHerbaceous-Other:evergreenForest                      5.094081e+00
+## Other:grasslandHerbaceous-Other:evergreenForest                        1.185897e-02
+## Seeds:grasslandHerbaceous-Other:evergreenForest                       -7.939103e-02
+## Twigs/branches:grasslandHerbaceous-Other:evergreenForest               8.650923e-01
+## Woody material:grasslandHerbaceous-Other:evergreenForest              -3.593014e-02
+## Flowers:shrubScrub-Other:evergreenForest                              -6.930207e-02
+## Leaves:shrubScrub-Other:evergreenForest                               -2.587152e-02
+## Mixed:shrubScrub-Other:evergreenForest                                 2.181377e+00
+## Needles:shrubScrub-Other:evergreenForest                               4.321481e+00
+## Other:shrubScrub-Other:evergreenForest                                -1.823161e-02
+## Seeds:shrubScrub-Other:evergreenForest                                -5.602991e-02
+## Twigs/branches:shrubScrub-Other:evergreenForest                        3.947756e-01
+## Woody material:shrubScrub-Other:evergreenForest                        4.316106e-02
+## Twigs/branches:evergreenForest-Seeds:evergreenForest                   2.005833e+00
+## Woody material:evergreenForest-Seeds:evergreenForest                   1.130475e+00
+## Flowers:grasslandHerbaceous-Seeds:evergreenForest                     -6.803601e-02
+## Leaves:grasslandHerbaceous-Seeds:evergreenForest                      -4.298984e-02
+## Mixed:grasslandHerbaceous-Seeds:evergreenForest                        1.055538e+00
+## Needles:grasslandHerbaceous-Seeds:evergreenForest                      5.105427e+00
+## Other:grasslandHerbaceous-Seeds:evergreenForest                        2.320513e-02
+## Seeds:grasslandHerbaceous-Seeds:evergreenForest                       -6.804487e-02
+## Twigs/branches:grasslandHerbaceous-Seeds:evergreenForest               8.764385e-01
+## Woody material:grasslandHerbaceous-Seeds:evergreenForest              -2.458399e-02
+## Flowers:shrubScrub-Seeds:evergreenForest                              -5.795592e-02
+## Leaves:shrubScrub-Seeds:evergreenForest                               -1.452537e-02
+## Mixed:shrubScrub-Seeds:evergreenForest                                 2.192723e+00
+## Needles:shrubScrub-Seeds:evergreenForest                               4.332827e+00
+## Other:shrubScrub-Seeds:evergreenForest                                -6.885452e-03
+## Seeds:shrubScrub-Seeds:evergreenForest                                -4.468376e-02
+## Twigs/branches:shrubScrub-Seeds:evergreenForest                        4.061218e-01
+## Woody material:shrubScrub-Seeds:evergreenForest                        5.450721e-02
+## Woody material:evergreenForest-Twigs/branches:evergreenForest         -8.753579e-01
+## Flowers:grasslandHerbaceous-Twigs/branches:evergreenForest            -2.073869e+00
+## Leaves:grasslandHerbaceous-Twigs/branches:evergreenForest             -2.048822e+00
+## Mixed:grasslandHerbaceous-Twigs/branches:evergreenForest              -9.502941e-01
+## Needles:grasslandHerbaceous-Twigs/branches:evergreenForest             3.099595e+00
+## Other:grasslandHerbaceous-Twigs/branches:evergreenForest              -1.982627e+00
+## Seeds:grasslandHerbaceous-Twigs/branches:evergreenForest              -2.073877e+00
+## Twigs/branches:grasslandHerbaceous-Twigs/branches:evergreenForest     -1.129394e+00
+## Woody material:grasslandHerbaceous-Twigs/branches:evergreenForest     -2.030417e+00
+## Flowers:shrubScrub-Twigs/branches:evergreenForest                     -2.063788e+00
+## Leaves:shrubScrub-Twigs/branches:evergreenForest                      -2.020358e+00
+## Mixed:shrubScrub-Twigs/branches:evergreenForest                        1.868901e-01
+## Needles:shrubScrub-Twigs/branches:evergreenForest                      2.326995e+00
+## Other:shrubScrub-Twigs/branches:evergreenForest                       -2.012718e+00
+## Seeds:shrubScrub-Twigs/branches:evergreenForest                       -2.050516e+00
+## Twigs/branches:shrubScrub-Twigs/branches:evergreenForest              -1.599711e+00
+## Woody material:shrubScrub-Twigs/branches:evergreenForest              -1.951325e+00
+## Flowers:grasslandHerbaceous-Woody material:evergreenForest            -1.198511e+00
+## Leaves:grasslandHerbaceous-Woody material:evergreenForest             -1.173464e+00
+## Mixed:grasslandHerbaceous-Woody material:evergreenForest              -7.493617e-02
+## Needles:grasslandHerbaceous-Woody material:evergreenForest             3.974953e+00
+## Other:grasslandHerbaceous-Woody material:evergreenForest              -1.107270e+00
+## Seeds:grasslandHerbaceous-Woody material:evergreenForest              -1.198520e+00
+## Twigs/branches:grasslandHerbaceous-Woody material:evergreenForest     -2.540362e-01
+## Woody material:grasslandHerbaceous-Woody material:evergreenForest     -1.155059e+00
+## Flowers:shrubScrub-Woody material:evergreenForest                     -1.188431e+00
+## Leaves:shrubScrub-Woody material:evergreenForest                      -1.145000e+00
+## Mixed:shrubScrub-Woody material:evergreenForest                        1.062248e+00
+## Needles:shrubScrub-Woody material:evergreenForest                      3.202352e+00
+## Other:shrubScrub-Woody material:evergreenForest                       -1.137360e+00
+## Seeds:shrubScrub-Woody material:evergreenForest                       -1.175158e+00
+## Twigs/branches:shrubScrub-Woody material:evergreenForest              -7.243528e-01
+## Woody material:shrubScrub-Woody material:evergreenForest              -1.075967e+00
+## Leaves:grasslandHerbaceous-Flowers:grasslandHerbaceous                 2.504617e-02
+## Mixed:grasslandHerbaceous-Flowers:grasslandHerbaceous                  1.123574e+00
+## Needles:grasslandHerbaceous-Flowers:grasslandHerbaceous                5.173463e+00
+## Other:grasslandHerbaceous-Flowers:grasslandHerbaceous                  9.124113e-02
+## Seeds:grasslandHerbaceous-Flowers:grasslandHerbaceous                 -8.865248e-06
+## Twigs/branches:grasslandHerbaceous-Flowers:grasslandHerbaceous         9.444745e-01
+## Woody material:grasslandHerbaceous-Flowers:grasslandHerbaceous         4.345202e-02
+## Flowers:shrubScrub-Flowers:grasslandHerbaceous                         1.008009e-02
+## Leaves:shrubScrub-Flowers:grasslandHerbaceous                          5.351064e-02
+## Mixed:shrubScrub-Flowers:grasslandHerbaceous                           2.260759e+00
+## Needles:shrubScrub-Flowers:grasslandHerbaceous                         4.400863e+00
+## Other:shrubScrub-Flowers:grasslandHerbaceous                           6.115056e-02
+## Seeds:shrubScrub-Flowers:grasslandHerbaceous                           2.335225e-02
+## Twigs/branches:shrubScrub-Flowers:grasslandHerbaceous                  4.741578e-01
+## Woody material:shrubScrub-Flowers:grasslandHerbaceous                  1.225432e-01
+## Mixed:grasslandHerbaceous-Leaves:grasslandHerbaceous                   1.098528e+00
+## Needles:grasslandHerbaceous-Leaves:grasslandHerbaceous                 5.148417e+00
+## Other:grasslandHerbaceous-Leaves:grasslandHerbaceous                   6.619497e-02
+## Seeds:grasslandHerbaceous-Leaves:grasslandHerbaceous                  -2.505503e-02
+## Twigs/branches:grasslandHerbaceous-Leaves:grasslandHerbaceous          9.194283e-01
+## Woody material:grasslandHerbaceous-Leaves:grasslandHerbaceous          1.840585e-02
+## Flowers:shrubScrub-Leaves:grasslandHerbaceous                         -1.496608e-02
+## Leaves:shrubScrub-Leaves:grasslandHerbaceous                           2.846447e-02
+## Mixed:shrubScrub-Leaves:grasslandHerbaceous                            2.235713e+00
+## Needles:shrubScrub-Leaves:grasslandHerbaceous                          4.375817e+00
+## Other:shrubScrub-Leaves:grasslandHerbaceous                            3.610439e-02
+## Seeds:shrubScrub-Leaves:grasslandHerbaceous                           -1.693920e-03
+## Twigs/branches:shrubScrub-Leaves:grasslandHerbaceous                   4.491116e-01
+## Woody material:shrubScrub-Leaves:grasslandHerbaceous                   9.749705e-02
+## Needles:grasslandHerbaceous-Mixed:grasslandHerbaceous                  4.049889e+00
+## Other:grasslandHerbaceous-Mixed:grasslandHerbaceous                   -1.032333e+00
+## Seeds:grasslandHerbaceous-Mixed:grasslandHerbaceous                   -1.123583e+00
+## Twigs/branches:grasslandHerbaceous-Mixed:grasslandHerbaceous          -1.791000e-01
+## Woody material:grasslandHerbaceous-Mixed:grasslandHerbaceous          -1.080122e+00
+## Flowers:shrubScrub-Mixed:grasslandHerbaceous                          -1.113494e+00
+## Leaves:shrubScrub-Mixed:grasslandHerbaceous                           -1.070064e+00
+## Mixed:shrubScrub-Mixed:grasslandHerbaceous                             1.137184e+00
+## Needles:shrubScrub-Mixed:grasslandHerbaceous                           3.277289e+00
+## Other:shrubScrub-Mixed:grasslandHerbaceous                            -1.062424e+00
+## Seeds:shrubScrub-Mixed:grasslandHerbaceous                            -1.100222e+00
+## Twigs/branches:shrubScrub-Mixed:grasslandHerbaceous                   -6.494167e-01
+## Woody material:shrubScrub-Mixed:grasslandHerbaceous                   -1.001031e+00
+## Other:grasslandHerbaceous-Needles:grasslandHerbaceous                 -5.082222e+00
+## Seeds:grasslandHerbaceous-Needles:grasslandHerbaceous                 -5.173472e+00
+## Twigs/branches:grasslandHerbaceous-Needles:grasslandHerbaceous        -4.228989e+00
+## Woody material:grasslandHerbaceous-Needles:grasslandHerbaceous        -5.130011e+00
+## Flowers:shrubScrub-Needles:grasslandHerbaceous                        -5.163383e+00
+## Leaves:shrubScrub-Needles:grasslandHerbaceous                         -5.119953e+00
+## Mixed:shrubScrub-Needles:grasslandHerbaceous                          -2.912705e+00
+## Needles:shrubScrub-Needles:grasslandHerbaceous                        -7.726002e-01
+## Other:shrubScrub-Needles:grasslandHerbaceous                          -5.112313e+00
+## Seeds:shrubScrub-Needles:grasslandHerbaceous                          -5.150111e+00
+## Twigs/branches:shrubScrub-Needles:grasslandHerbaceous                 -4.699306e+00
+## Woody material:shrubScrub-Needles:grasslandHerbaceous                 -5.050920e+00
+## Seeds:grasslandHerbaceous-Other:grasslandHerbaceous                   -9.125000e-02
+## Twigs/branches:grasslandHerbaceous-Other:grasslandHerbaceous           8.532333e-01
+## Woody material:grasslandHerbaceous-Other:grasslandHerbaceous          -4.778912e-02
+## Flowers:shrubScrub-Other:grasslandHerbaceous                          -8.116105e-02
+## Leaves:shrubScrub-Other:grasslandHerbaceous                           -3.773050e-02
+## Mixed:shrubScrub-Other:grasslandHerbaceous                             2.169518e+00
+## Needles:shrubScrub-Other:grasslandHerbaceous                           4.309622e+00
+## Other:shrubScrub-Other:grasslandHerbaceous                            -3.009058e-02
+## Seeds:shrubScrub-Other:grasslandHerbaceous                            -6.788889e-02
+## Twigs/branches:shrubScrub-Other:grasslandHerbaceous                    3.829167e-01
+## Woody material:shrubScrub-Other:grasslandHerbaceous                    3.130208e-02
+## Twigs/branches:grasslandHerbaceous-Seeds:grasslandHerbaceous           9.444833e-01
+## Woody material:grasslandHerbaceous-Seeds:grasslandHerbaceous           4.346088e-02
+## Flowers:shrubScrub-Seeds:grasslandHerbaceous                           1.008895e-02
+## Leaves:shrubScrub-Seeds:grasslandHerbaceous                            5.351950e-02
+## Mixed:shrubScrub-Seeds:grasslandHerbaceous                             2.260768e+00
+## Needles:shrubScrub-Seeds:grasslandHerbaceous                           4.400872e+00
+## Other:shrubScrub-Seeds:grasslandHerbaceous                             6.115942e-02
+## Seeds:shrubScrub-Seeds:grasslandHerbaceous                             2.336111e-02
+## Twigs/branches:shrubScrub-Seeds:grasslandHerbaceous                    4.741667e-01
+## Woody material:shrubScrub-Seeds:grasslandHerbaceous                    1.225521e-01
+## Woody material:grasslandHerbaceous-Twigs/branches:grasslandHerbaceous -9.010224e-01
+## Flowers:shrubScrub-Twigs/branches:grasslandHerbaceous                 -9.343944e-01
+## Leaves:shrubScrub-Twigs/branches:grasslandHerbaceous                  -8.909638e-01
+## Mixed:shrubScrub-Twigs/branches:grasslandHerbaceous                    1.316284e+00
+## Needles:shrubScrub-Twigs/branches:grasslandHerbaceous                  3.456389e+00
+## Other:shrubScrub-Twigs/branches:grasslandHerbaceous                   -8.833239e-01
+## Seeds:shrubScrub-Twigs/branches:grasslandHerbaceous                   -9.211222e-01
+## Twigs/branches:shrubScrub-Twigs/branches:grasslandHerbaceous          -4.703167e-01
+## Woody material:shrubScrub-Twigs/branches:grasslandHerbaceous          -8.219313e-01
+## Flowers:shrubScrub-Woody material:grasslandHerbaceous                 -3.337193e-02
+## Leaves:shrubScrub-Woody material:grasslandHerbaceous                   1.005862e-02
+## Mixed:shrubScrub-Woody material:grasslandHerbaceous                    2.217307e+00
+## Needles:shrubScrub-Woody material:grasslandHerbaceous                  4.357411e+00
+## Other:shrubScrub-Woody material:grasslandHerbaceous                    1.769854e-02
+## Seeds:shrubScrub-Woody material:grasslandHerbaceous                   -2.009977e-02
+## Twigs/branches:shrubScrub-Woody material:grasslandHerbaceous           4.307058e-01
+## Woody material:shrubScrub-Woody material:grasslandHerbaceous           7.909120e-02
+## Leaves:shrubScrub-Flowers:shrubScrub                                   4.343055e-02
+## Mixed:shrubScrub-Flowers:shrubScrub                                    2.250679e+00
+## Needles:shrubScrub-Flowers:shrubScrub                                  4.390783e+00
+## Other:shrubScrub-Flowers:shrubScrub                                    5.107047e-02
+## Seeds:shrubScrub-Flowers:shrubScrub                                    1.327216e-02
+## Twigs/branches:shrubScrub-Flowers:shrubScrub                           4.640777e-01
+## Woody material:shrubScrub-Flowers:shrubScrub                           1.124631e-01
+## Mixed:shrubScrub-Leaves:shrubScrub                                     2.207248e+00
+## Needles:shrubScrub-Leaves:shrubScrub                                   4.347352e+00
+## Other:shrubScrub-Leaves:shrubScrub                                     7.639917e-03
+## Seeds:shrubScrub-Leaves:shrubScrub                                    -3.015839e-02
+## Twigs/branches:shrubScrub-Leaves:shrubScrub                            4.206472e-01
+## Woody material:shrubScrub-Leaves:shrubScrub                            6.903258e-02
+## Needles:shrubScrub-Mixed:shrubScrub                                    2.140104e+00
+## Other:shrubScrub-Mixed:shrubScrub                                     -2.199608e+00
+## Seeds:shrubScrub-Mixed:shrubScrub                                     -2.237406e+00
+## Twigs/branches:shrubScrub-Mixed:shrubScrub                            -1.786601e+00
+## Woody material:shrubScrub-Mixed:shrubScrub                            -2.138215e+00
+## Other:shrubScrub-Needles:shrubScrub                                   -4.339713e+00
+## Seeds:shrubScrub-Needles:shrubScrub                                   -4.377511e+00
+## Twigs/branches:shrubScrub-Needles:shrubScrub                          -3.926705e+00
+## Woody material:shrubScrub-Needles:shrubScrub                          -4.278320e+00
+## Seeds:shrubScrub-Other:shrubScrub                                     -3.779831e-02
+## Twigs/branches:shrubScrub-Other:shrubScrub                             4.130072e-01
+## Woody material:shrubScrub-Other:shrubScrub                             6.139266e-02
+## Twigs/branches:shrubScrub-Seeds:shrubScrub                             4.508056e-01
+## Woody material:shrubScrub-Seeds:shrubScrub                             9.919097e-02
+## Woody material:shrubScrub-Twigs/branches:shrubScrub                   -3.516146e-01
+##                                                                                lwr
+## Leaves:evergreenForest-Flowers:evergreenForest                        -2.129566790
+## Mixed:evergreenForest-Flowers:evergreenForest                         -0.819782291
+## Needles:evergreenForest-Flowers:evergreenForest                        5.355878443
+## Other:evergreenForest-Flowers:evergreenForest                         -2.060784739
+## Seeds:evergreenForest-Flowers:evergreenForest                         -2.072130893
+## Twigs/branches:evergreenForest-Flowers:evergreenForest                -0.023609487
+## Woody material:evergreenForest-Flowers:evergreenForest                -0.852386878
+## Flowers:grasslandHerbaceous-Flowers:evergreenForest                   -2.454136383
+## Leaves:grasslandHerbaceous-Flowers:evergreenForest                    -2.344114655
+## Mixed:grasslandHerbaceous-Flowers:evergreenForest                     -2.173621929
+## Needles:grasslandHerbaceous-Flowers:evergreenForest                    2.816896666
+## Other:grasslandHerbaceous-Flowers:evergreenForest                     -2.347490625
+## Seeds:grasslandHerbaceous-Flowers:evergreenForest                     -2.438740625
+## Twigs/branches:grasslandHerbaceous-Flowers:evergreenForest            -1.465016727
+## Woody material:grasslandHerbaceous-Flowers:evergreenForest            -2.380407340
+## Flowers:shrubScrub-Flowers:evergreenForest                            -2.065670211
+## Leaves:shrubScrub-Flowers:evergreenForest                             -1.997386878
+## Mixed:shrubScrub-Flowers:evergreenForest                              -0.361861760
+## Needles:shrubScrub-Flowers:evergreenForest                             2.363784540
+## Other:shrubScrub-Flowers:evergreenForest                              -1.999401547
+## Seeds:shrubScrub-Flowers:evergreenForest                              -2.047232668
+## Twigs/branches:shrubScrub-Flowers:evergreenForest                     -1.567442022
+## Woody material:shrubScrub-Flowers:evergreenForest                     -1.919056606
+## Mixed:evergreenForest-Leaves:evergreenForest                          -0.727331832
+## Needles:evergreenForest-Leaves:evergreenForest                         5.446243927
+## Other:evergreenForest-Leaves:evergreenForest                          -1.969967636
+## Seeds:evergreenForest-Leaves:evergreenForest                          -1.981313790
+## Twigs/branches:evergreenForest-Leaves:evergreenForest                  0.066934267
+## Woody material:evergreenForest-Leaves:evergreenForest                 -0.762155004
+## Flowers:grasslandHerbaceous-Leaves:evergreenForest                    -2.361612874
+## Leaves:grasslandHerbaceous-Leaves:evergreenForest                     -2.252006448
+## Mixed:grasslandHerbaceous-Leaves:evergreenForest                      -2.078173664
+## Needles:grasslandHerbaceous-Leaves:evergreenForest                     2.908940663
+## Other:grasslandHerbaceous-Leaves:evergreenForest                      -2.255040166
+## Seeds:grasslandHerbaceous-Leaves:evergreenForest                      -2.346290166
+## Twigs/branches:grasslandHerbaceous-Leaves:evergreenForest             -1.372707607
+## Woody material:grasslandHerbaceous-Leaves:evergreenForest             -2.288028325
+## Flowers:shrubScrub-Leaves:evergreenForest                             -1.975270111
+## Leaves:shrubScrub-Leaves:evergreenForest                              -1.907155004
+## Mixed:shrubScrub-Leaves:evergreenForest                               -0.268597476
+## Needles:shrubScrub-Leaves:evergreenForest                              2.453921013
+## Other:shrubScrub-Leaves:evergreenForest                               -1.909103817
+## Seeds:shrubScrub-Leaves:evergreenForest                               -1.956867184
+## Twigs/branches:shrubScrub-Leaves:evergreenForest                      -1.477274187
+## Woody material:shrubScrub-Leaves:evergreenForest                      -1.828888771
+## Needles:evergreenForest-Mixed:evergreenForest                          3.531924601
+## Other:evergreenForest-Mixed:evergreenForest                           -3.875248499
+## Seeds:evergreenForest-Mixed:evergreenForest                           -3.886594653
+## Twigs/branches:evergreenForest-Mixed:evergreenForest                  -1.843831981
+## Woody material:evergreenForest-Mixed:evergreenForest                  -2.679124714
+## Flowers:grasslandHerbaceous-Mixed:evergreenForest                     -4.231642975
+## Leaves:grasslandHerbaceous-Mixed:evergreenForest                      -4.130774071
+## Mixed:grasslandHerbaceous-Mixed:evergreenForest                       -3.883933992
+## Needles:grasslandHerbaceous-Mixed:evergreenForest                      1.028831138
+## Other:grasslandHerbaceous-Mixed:evergreenForest                       -4.126614443
+## Seeds:grasslandHerbaceous-Mixed:evergreenForest                       -4.217864443
+## Twigs/branches:grasslandHerbaceous-Mixed:evergreenForest              -3.247260787
+## Woody material:grasslandHerbaceous-Mixed:evergreenForest              -4.161109834
+## Flowers:shrubScrub-Mixed:evergreenForest                              -3.888901015
+## Leaves:shrubScrub-Mixed:evergreenForest                               -3.824124714
+## Mixed:shrubScrub-Mixed:evergreenForest                                -2.122795347
+## Needles:shrubScrub-Mixed:evergreenForest                               0.535065489
+## Other:shrubScrub-Mixed:evergreenForest                                -3.824768514
+## Seeds:shrubScrub-Mixed:evergreenForest                                -3.871186510
+## Twigs/branches:shrubScrub-Mixed:evergreenForest                       -3.395510380
+## Woody material:shrubScrub-Mixed:evergreenForest                       -3.747124963
+## Other:evergreenForest-Needles:evergreenForest                         -9.316700517
+## Seeds:evergreenForest-Needles:evergreenForest                         -9.328046671
+## Twigs/branches:evergreenForest-Needles:evergreenForest                -7.278276535
+## Woody material:evergreenForest-Needles:evergreenForest                -8.105625630
+## Flowers:grasslandHerbaceous-Needles:evergreenForest                   -9.717786337
+## Leaves:grasslandHerbaceous-Needles:evergreenForest                    -9.605891491
+## Mixed:grasslandHerbaceous-Needles:evergreenForest                     -9.450320490
+## Needles:grasslandHerbaceous-Needles:evergreenForest                   -4.444590062
+## Other:grasslandHerbaceous-Needles:evergreenForest                     -9.610811510
+## Seeds:grasslandHerbaceous-Needles:evergreenForest                     -9.702061510
+## Twigs/branches:grasslandHerbaceous-Needles:evergreenForest            -8.727700435
+## Woody material:grasslandHerbaceous-Needles:evergreenForest            -9.643406225
+## Flowers:shrubScrub-Needles:evergreenForest                            -9.319679856
+## Leaves:shrubScrub-Needles:evergreenForest                             -9.250625630
+## Mixed:shrubScrub-Needles:evergreenForest                              -7.628839266
+## Needles:shrubScrub-Needles:evergreenForest                            -4.889016539
+## Other:shrubScrub-Needles:evergreenForest                              -9.252942218
+## Seeds:shrubScrub-Needles:evergreenForest                              -9.301083779
+## Twigs/branches:shrubScrub-Needles:evergreenForest                     -8.820387022
+## Woody material:shrubScrub-Needles:evergreenForest                     -9.172001606
+## Seeds:evergreenForest-Other:evergreenForest                           -2.050095841
+## Twigs/branches:evergreenForest-Other:evergreenForest                  -0.001847784
+## Woody material:evergreenForest-Other:evergreenForest                  -0.830937055
+## Flowers:grasslandHerbaceous-Other:evergreenForest                     -2.430394925
+## Leaves:grasslandHerbaceous-Other:evergreenForest                      -2.320788499
+## Mixed:grasslandHerbaceous-Other:evergreenForest                       -2.146955715
+## Needles:grasslandHerbaceous-Other:evergreenForest                      2.840158612
+## Other:grasslandHerbaceous-Other:evergreenForest                       -2.323822217
+## Seeds:grasslandHerbaceous-Other:evergreenForest                       -2.415072217
+## Twigs/branches:grasslandHerbaceous-Other:evergreenForest              -1.441489659
+## Woody material:grasslandHerbaceous-Other:evergreenForest              -2.356810376
+## Flowers:shrubScrub-Other:evergreenForest                              -2.044052162
+## Leaves:shrubScrub-Other:evergreenForest                               -1.975937055
+## Mixed:shrubScrub-Other:evergreenForest                                -0.337379527
+## Needles:shrubScrub-Other:evergreenForest                               2.385138962
+## Other:shrubScrub-Other:evergreenForest                                -1.977885868
+## Seeds:shrubScrub-Other:evergreenForest                                -2.025649235
+## Twigs/branches:shrubScrub-Other:evergreenForest                       -1.546056239
+## Woody material:shrubScrub-Other:evergreenForest                       -1.897670822
+## Twigs/branches:evergreenForest-Seeds:evergreenForest                   0.009498370
+## Woody material:evergreenForest-Seeds:evergreenForest                  -0.819590901
+## Flowers:grasslandHerbaceous-Seeds:evergreenForest                     -2.419048771
+## Leaves:grasslandHerbaceous-Seeds:evergreenForest                      -2.309442346
+## Mixed:grasslandHerbaceous-Seeds:evergreenForest                       -2.135609561
+## Needles:grasslandHerbaceous-Seeds:evergreenForest                      2.851504766
+## Other:grasslandHerbaceous-Seeds:evergreenForest                       -2.312476063
+## Seeds:grasslandHerbaceous-Seeds:evergreenForest                       -2.403726063
+## Twigs/branches:grasslandHerbaceous-Seeds:evergreenForest              -1.430143505
+## Woody material:grasslandHerbaceous-Seeds:evergreenForest              -2.345464223
+## Flowers:shrubScrub-Seeds:evergreenForest                              -2.032706008
+## Leaves:shrubScrub-Seeds:evergreenForest                               -1.964590901
+## Mixed:shrubScrub-Seeds:evergreenForest                                -0.326033374
+## Needles:shrubScrub-Seeds:evergreenForest                               2.396485116
+## Other:shrubScrub-Seeds:evergreenForest                                -1.966539715
+## Seeds:shrubScrub-Seeds:evergreenForest                                -2.014303081
+## Twigs/branches:shrubScrub-Seeds:evergreenForest                       -1.534710085
+## Woody material:shrubScrub-Seeds:evergreenForest                       -1.886324668
+## Woody material:evergreenForest-Twigs/branches:evergreenForest         -2.781035142
+## Flowers:grasslandHerbaceous-Twigs/branches:evergreenForest            -4.388195920
+## Leaves:grasslandHerbaceous-Twigs/branches:evergreenForest             -4.277197825
+## Mixed:grasslandHerbaceous-Twigs/branches:evergreenForest              -4.114512140
+## Needles:grasslandHerbaceous-Twigs/branches:evergreenForest             0.883964611
+## Other:grasslandHerbaceous-Twigs/branches:evergreenForest              -4.281378550
+## Seeds:grasslandHerbaceous-Twigs/branches:evergreenForest              -4.372628550
+## Twigs/branches:grasslandHerbaceous-Twigs/branches:evergreenForest     -3.398572461
+## Woody material:grasslandHerbaceous-Twigs/branches:evergreenForest     -4.314127375
+## Flowers:shrubScrub-Twigs/branches:evergreenForest                     -3.994717783
+## Leaves:shrubScrub-Twigs/branches:evergreenForest                      -3.926035142
+## Mixed:shrubScrub-Twigs/branches:evergreenForest                       -2.297658559
+## Needles:shrubScrub-Twigs/branches:evergreenForest                      0.435362879
+## Other:shrubScrub-Twigs/branches:evergreenForest                       -3.928206172
+## Seeds:shrubScrub-Twigs/branches:evergreenForest                       -3.976198104
+## Twigs/branches:shrubScrub-Twigs/branches:evergreenForest              -3.495938190
+## Woody material:shrubScrub-Twigs/branches:evergreenForest              -3.847552773
+## Flowers:grasslandHerbaceous-Woody material:evergreenForest            -3.473047144
+## Leaves:grasslandHerbaceous-Woody material:evergreenForest             -3.360485792
+## Mixed:grasslandHerbaceous-Woody material:evergreenForest              -3.210168378
+## Needles:grasslandHerbaceous-Woody material:evergreenForest             1.800919068
+## Other:grasslandHerbaceous-Woody material:evergreenForest              -3.365955387
+## Seeds:grasslandHerbaceous-Woody material:evergreenForest              -3.457205387
+## Twigs/branches:grasslandHerbaceous-Woody material:evergreenForest     -2.482617706
+## Woody material:grasslandHerbaceous-Woody material:evergreenForest     -3.398435618
+## Flowers:shrubScrub-Woody material:evergreenForest                     -3.071484775
+## Leaves:shrubScrub-Woody material:evergreenForest                      -3.002151280
+## Mixed:shrubScrub-Woody material:evergreenForest                       -1.385278734
+## Needles:shrubScrub-Woody material:evergreenForest                      1.359616573
+## Other:shrubScrub-Woody material:evergreenForest                       -3.004577298
+## Seeds:shrubScrub-Woody material:evergreenForest                       -3.052831304
+## Twigs/branches:shrubScrub-Woody material:evergreenForest              -2.571806133
+## Woody material:shrubScrub-Woody material:evergreenForest              -2.923420716
+## Leaves:grasslandHerbaceous-Flowers:grasslandHerbaceous                -2.525947305
+## Mixed:grasslandHerbaceous-Flowers:grasslandHerbaceous                 -2.275570489
+## Needles:grasslandHerbaceous-Flowers:grasslandHerbaceous                2.633595693
+## Other:grasslandHerbaceous-Flowers:grasslandHerbaceous                 -2.521452372
+## Seeds:grasslandHerbaceous-Flowers:grasslandHerbaceous                 -2.612702372
+## Twigs/branches:grasslandHerbaceous-Flowers:grasslandHerbaceous        -1.642237944
+## Woody material:grasslandHerbaceous-Flowers:grasslandHerbaceous        -2.556018273
+## Flowers:shrubScrub-Flowers:grasslandHerbaceous                        -2.285654795
+## Leaves:shrubScrub-Flowers:grasslandHerbaceous                         -2.221025867
+## Mixed:shrubScrub-Flowers:grasslandHerbaceous                          -0.516810898
+## Needles:shrubScrub-Flowers:grasslandHerbaceous                         2.138081412
+## Other:shrubScrub-Flowers:grasslandHerbaceous                          -2.221612149
+## Seeds:shrubScrub-Flowers:grasslandHerbaceous                          -2.267970735
+## Twigs/branches:shrubScrub-Flowers:grasslandHerbaceous                 -1.792467249
+## Woody material:shrubScrub-Flowers:grasslandHerbaceous                 -2.144081832
+## Mixed:grasslandHerbaceous-Leaves:grasslandHerbaceous                  -2.242688898
+## Needles:grasslandHerbaceous-Leaves:grasslandHerbaceous                 2.686614256
+## Other:grasslandHerbaceous-Leaves:grasslandHerbaceous                  -2.470675800
+## Seeds:grasslandHerbaceous-Leaves:grasslandHerbaceous                  -2.561925800
+## Twigs/branches:grasslandHerbaceous-Leaves:grasslandHerbaceous         -1.590676684
+## Woody material:grasslandHerbaceous-Leaves:grasslandHerbaceous         -2.504844380
+## Flowers:shrubScrub-Leaves:grasslandHerbaceous                         -2.224025740
+## Leaves:shrubScrub-Leaves:grasslandHerbaceous                          -2.158556848
+## Mixed:shrubScrub-Leaves:grasslandHerbaceous                           -0.470657508
+## Needles:shrubScrub-Leaves:grasslandHerbaceous                          2.201023401
+## Other:shrubScrub-Leaves:grasslandHerbaceous                           -2.159471049
+## Seeds:shrubScrub-Leaves:grasslandHerbaceous                           -2.206168220
+## Twigs/branches:shrubScrub-Leaves:grasslandHerbaceous                  -1.729680474
+## Woody material:shrubScrub-Leaves:grasslandHerbaceous                  -2.081295058
+## Needles:grasslandHerbaceous-Mixed:grasslandHerbaceous                  0.717158412
+## Other:grasslandHerbaceous-Mixed:grasslandHerbaceous                   -4.420892325
+## Seeds:grasslandHerbaceous-Mixed:grasslandHerbaceous                   -4.512142325
+## Twigs/branches:grasslandHerbaceous-Mixed:grasslandHerbaceous          -3.547667319
+## Woody material:grasslandHerbaceous-Mixed:grasslandHerbaceous          -4.458496390
+## Flowers:shrubScrub-Mixed:grasslandHerbaceous                          -4.264139288
+## Leaves:shrubScrub-Mixed:grasslandHerbaceous                           -4.205296038
+## Mixed:shrubScrub-Mixed:grasslandHerbaceous                            -2.380067193
+## Needles:shrubScrub-Mixed:grasslandHerbaceous                           0.150573806
+## Other:shrubScrub-Mixed:grasslandHerbaceous                            -4.203629135
+## Seeds:shrubScrub-Mixed:grasslandHerbaceous                            -4.247653823
+## Twigs/branches:shrubScrub-Mixed:grasslandHerbaceous                   -3.778914039
+## Woody material:shrubScrub-Mixed:grasslandHerbaceous                   -4.130528622
+## Other:grasslandHerbaceous-Needles:grasslandHerbaceous                 -7.607904973
+## Seeds:grasslandHerbaceous-Needles:grasslandHerbaceous                 -7.699154973
+## Twigs/branches:grasslandHerbaceous-Needles:grasslandHerbaceous        -6.727786019
+## Woody material:grasslandHerbaceous-Needles:grasslandHerbaceous        -7.642012890
+## Flowers:shrubScrub-Needles:grasslandHerbaceous                        -7.359585593
+## Leaves:shrubScrub-Needles:grasslandHerbaceous                         -7.293986369
+## Mixed:shrubScrub-Needles:grasslandHerbaceous                          -5.608590200
+## Needles:shrubScrub-Needles:grasslandHerbaceous                        -2.934332658
+## Other:shrubScrub-Needles:grasslandHerbaceous                          -7.294951471
+## Seeds:shrubScrub-Needles:grasslandHerbaceous                          -7.341701173
+## Twigs/branches:shrubScrub-Needles:grasslandHerbaceous                 -6.865060647
+## Woody material:shrubScrub-Needles:grasslandHerbaceous                 -7.216675230
+## Seeds:grasslandHerbaceous-Other:grasslandHerbaceous                   -2.690156110
+## Twigs/branches:grasslandHerbaceous-Other:grasslandHerbaceous          -1.719552454
+## Woody material:grasslandHerbaceous-Other:grasslandHerbaceous          -2.633401501
+## Flowers:shrubScrub-Other:grasslandHerbaceous                          -2.361192682
+## Leaves:shrubScrub-Other:grasslandHerbaceous                           -2.296416380
+## Mixed:shrubScrub-Other:grasslandHerbaceous                            -0.595087013
+## Needles:shrubScrub-Other:grasslandHerbaceous                           2.062773823
+## Other:shrubScrub-Other:grasslandHerbaceous                            -2.297060180
+## Seeds:shrubScrub-Other:grasslandHerbaceous                            -2.343478177
+## Twigs/branches:shrubScrub-Other:grasslandHerbaceous                   -1.867802046
+## Woody material:shrubScrub-Other:grasslandHerbaceous                   -2.219416630
+## Twigs/branches:grasslandHerbaceous-Seeds:grasslandHerbaceous          -1.628302454
+## Woody material:grasslandHerbaceous-Seeds:grasslandHerbaceous          -2.542151501
+## Flowers:shrubScrub-Seeds:grasslandHerbaceous                          -2.269942682
+## Leaves:shrubScrub-Seeds:grasslandHerbaceous                           -2.205166380
+## Mixed:shrubScrub-Seeds:grasslandHerbaceous                            -0.503837013
+## Needles:shrubScrub-Seeds:grasslandHerbaceous                           2.154023823
+## Other:shrubScrub-Seeds:grasslandHerbaceous                            -2.205810180
+## Seeds:shrubScrub-Seeds:grasslandHerbaceous                            -2.252228177
+## Twigs/branches:shrubScrub-Seeds:grasslandHerbaceous                   -1.776552046
+## Woody material:shrubScrub-Seeds:grasslandHerbaceous                   -2.128166630
+## Woody material:grasslandHerbaceous-Twigs/branches:grasslandHerbaceous -3.460378842
+## Flowers:shrubScrub-Twigs/branches:grasslandHerbaceous                 -3.184607259
+## Leaves:shrubScrub-Twigs/branches:grasslandHerbaceous                  -3.119545366
+## Mixed:shrubScrub-Twigs/branches:grasslandHerbaceous                   -1.423780040
+## Needles:shrubScrub-Twigs/branches:grasslandHerbaceous                  1.239805604
+## Other:shrubScrub-Twigs/branches:grasslandHerbaceous                   -3.120300648
+## Seeds:shrubScrub-Twigs/branches:grasslandHerbaceous                   -3.166833768
+## Twigs/branches:shrubScrub-Twigs/branches:grasslandHerbaceous          -2.690823020
+## Woody material:shrubScrub-Twigs/branches:grasslandHerbaceous          -3.042437603
+## Flowers:shrubScrub-Woody material:grasslandHerbaceous                 -2.298238969
+## Leaves:shrubScrub-Woody material:grasslandHerbaceous                  -2.233318380
+## Mixed:shrubScrub-Woody material:grasslandHerbaceous                   -0.534804675
+## Needles:shrubScrub-Woody material:grasslandHerbaceous                  2.125953034
+## Other:shrubScrub-Woody material:grasslandHerbaceous                   -2.234018500
+## Seeds:shrubScrub-Woody material:grasslandHerbaceous                   -2.280494661
+## Twigs/branches:shrubScrub-Woody material:grasslandHerbaceous          -1.804649483
+## Woody material:shrubScrub-Woody material:grasslandHerbaceous          -2.156264067
+## Leaves:shrubScrub-Flowers:shrubScrub                                  -1.839623670
+## Mixed:shrubScrub-Flowers:shrubScrub                                   -0.216560682
+## Needles:shrubScrub-Flowers:shrubScrub                                  2.521944369
+## Other:shrubScrub-Flowers:shrubScrub                                   -1.841911954
+## Seeds:shrubScrub-Flowers:shrubScrub                                   -1.890024425
+## Twigs/branches:shrubScrub-Flowers:shrubScrub                          -1.409412612
+## Woody material:shrubScrub-Flowers:shrubScrub                          -1.761027196
+## Mixed:shrubScrub-Leaves:shrubScrub                                    -0.240278734
+## Needles:shrubScrub-Leaves:shrubScrub                                   2.504616573
+## Other:shrubScrub-Leaves:shrubScrub                                    -1.859577298
+## Seeds:shrubScrub-Leaves:shrubScrub                                    -1.907831304
+## Twigs/branches:shrubScrub-Leaves:shrubScrub                           -1.426806133
+## Woody material:shrubScrub-Leaves:shrubScrub                           -1.778420716
+## Needles:shrubScrub-Mixed:shrubScrub                                   -0.296502226
+## Other:shrubScrub-Mixed:shrubScrub                                     -4.654781551
+## Seeds:shrubScrub-Mixed:shrubScrub                                     -4.700541021
+## Twigs/branches:shrubScrub-Mixed:shrubScrub                            -4.226777124
+## Woody material:shrubScrub-Mixed:shrubScrub                            -4.578391707
+## Other:shrubScrub-Needles:shrubScrub                                   -6.192592738
+## Seeds:shrubScrub-Needles:shrubScrub                                   -6.240927192
+## Twigs/branches:shrubScrub-Needles:shrubScrub                          -5.759666990
+## Woody material:shrubScrub-Needles:shrubScrub                          -6.111281573
+## Seeds:shrubScrub-Other:shrubScrub                                     -1.925427725
+## Twigs/branches:shrubScrub-Other:shrubScrub                            -1.444564537
+## Woody material:shrubScrub-Other:shrubScrub                            -1.796179120
+## Twigs/branches:shrubScrub-Seeds:shrubScrub                            -1.417275911
+## Woody material:shrubScrub-Seeds:shrubScrub                            -1.768890494
+## Woody material:shrubScrub-Twigs/branches:shrubScrub                   -2.189318717
+##                                                                               upr
+## Leaves:evergreenForest-Flowers:evergreenForest                         1.92236807
+## Mixed:evergreenForest-Flowers:evergreenForest                          3.82928229
+## Needles:evergreenForest-Flowers:evergreenForest                        9.26864934
+## Other:evergreenForest-Flowers:evergreenForest                          1.99115012
+## Seeds:evergreenForest-Flowers:evergreenForest                          1.97980397
+## Twigs/branches:evergreenForest-Flowers:evergreenForest                 3.94294772
+## Woody material:evergreenForest-Flowers:evergreenForest                 3.02100922
+## Flowers:grasslandHerbaceous-Flowers:evergreenForest                    2.22573745
+## Leaves:grasslandHerbaceous-Flowers:evergreenForest                     2.16580805
+## Mixed:grasslandHerbaceous-Flowers:evergreenForest                      4.19237193
+## Needles:grasslandHerbaceous-Flowers:evergreenForest                    7.30163111
+## Other:grasslandHerbaceous-Flowers:evergreenForest                      2.30157396
+## Seeds:grasslandHerbaceous-Flowers:evergreenForest                      2.21032396
+## Twigs/branches:grasslandHerbaceous-Flowers:evergreenForest             3.12556673
+## Woody material:grasslandHerbaceous-Flowers:evergreenForest             2.23891244
+## Flowers:shrubScrub-Flowers:evergreenForest                             1.85743145
+## Leaves:shrubScrub-Flowers:evergreenForest                              1.87600922
+## Mixed:shrubScrub-Flowers:evergreenForest                               4.65498018
+## Needles:shrubScrub-Flowers:evergreenForest                             6.20954278
+## Other:shrubScrub-Flowers:evergreenForest                               1.89330372
+## Seeds:shrubScrub-Flowers:evergreenForest                               1.86553822
+## Twigs/branches:shrubScrub-Flowers:evergreenForest                      2.28735869
+## Woody material:shrubScrub-Flowers:evergreenForest                      1.93574411
+## Mixed:evergreenForest-Leaves:evergreenForest                           3.94403055
+## Needles:evergreenForest-Leaves:evergreenForest                         9.38548257
+## Other:evergreenForest-Leaves:evergreenForest                           2.10753174
+## Seeds:evergreenForest-Leaves:evergreenForest                           2.09618558
+## Twigs/branches:evergreenForest-Leaves:evergreenForest                  4.05960269
+## Woody material:evergreenForest-Leaves:evergreenForest                  3.13797606
+## Flowers:grasslandHerbaceous-Leaves:evergreenForest                     2.34041266
+## Leaves:grasslandHerbaceous-Leaves:evergreenForest                      2.28089856
+## Mixed:grasslandHerbaceous-Leaves:evergreenForest                       4.30412238
+## Needles:grasslandHerbaceous-Leaves:evergreenForest                     7.41678583
+## Other:grasslandHerbaceous-Leaves:evergreenForest                       2.41632222
+## Seeds:grasslandHerbaceous-Leaves:evergreenForest                       2.32507222
+## Twigs/branches:grasslandHerbaceous-Leaves:evergreenForest              3.24045633
+## Woody material:grasslandHerbaceous-Leaves:evergreenForest              2.35373215
+## Flowers:shrubScrub-Leaves:evergreenForest                              1.97423006
+## Leaves:shrubScrub-Leaves:evergreenForest                               1.99297606
+## Mixed:shrubScrub-Leaves:evergreenForest                                4.76891462
+## Needles:shrubScrub-Leaves:evergreenForest                              6.32660502
+## Other:shrubScrub-Leaves:evergreenForest                                2.01020471
+## Seeds:shrubScrub-Leaves:evergreenForest                                1.98237146
+## Twigs/branches:shrubScrub-Leaves:evergreenForest                       2.40438957
+## Woody material:shrubScrub-Leaves:evergreenForest                       2.05277499
+## Needles:evergreenForest-Mixed:evergreenForest                          8.08310318
+## Other:evergreenForest-Mixed:evergreenForest                            0.79611388
+## Seeds:evergreenForest-Mixed:evergreenForest                            0.78476773
+## Twigs/branches:evergreenForest-Mixed:evergreenForest                   2.75367022
+## Woody material:evergreenForest-Mixed:evergreenForest                   1.83824705
+## Flowers:grasslandHerbaceous-Mixed:evergreenForest                      0.99374404
+## Leaves:grasslandHerbaceous-Mixed:evergreenForest                       0.94296747
+## Mixed:grasslandHerbaceous-Mixed:evergreenForest                        2.89318399
+## Needles:grasslandHerbaceous-Mixed:evergreenForest                      6.08019664
+## Other:grasslandHerbaceous-Mixed:evergreenForest                        1.07119778
+## Seeds:grasslandHerbaceous-Mixed:evergreenForest                        0.97994778
+## Twigs/branches:grasslandHerbaceous-Mixed:evergreenForest               1.89831079
+## Woody material:grasslandHerbaceous-Mixed:evergreenForest               1.01011494
+## Flowers:shrubScrub-Mixed:evergreenForest                               0.67116225
+## Leaves:shrubScrub-Mixed:evergreenForest                                0.69324705
+## Mixed:shrubScrub-Mixed:evergreenForest                                 3.40641377
+## Needles:shrubScrub-Mixed:evergreenForest                               5.02876183
+## Other:shrubScrub-Mixed:evergreenForest                                 0.70917069
+## Seeds:shrubScrub-Mixed:evergreenForest                                 0.67999207
+## Twigs/branches:shrubScrub-Mixed:evergreenForest                        1.10592705
+## Woody material:shrubScrub-Mixed:evergreenForest                        0.75431246
+## Other:evergreenForest-Needles:evergreenForest                         -5.37746188
+## Seeds:evergreenForest-Needles:evergreenForest                         -5.38880803
+## Twigs/branches:evergreenForest-Needles:evergreenForest                -3.42691301
+## Woody material:evergreenForest-Needles:evergreenForest                -4.35027981
+## Flowers:grasslandHerbaceous-Needles:evergreenForest                   -5.13514038
+## Leaves:grasslandHerbaceous-Needles:evergreenForest                    -5.19694289
+## Mixed:grasslandHerbaceous-Needles:evergreenForest                     -3.15545729
+## Needles:grasslandHerbaceous-Needles:evergreenForest                   -0.06140994
+## Other:grasslandHerbaceous-Needles:evergreenForest                     -5.05963293
+## Seeds:grasslandHerbaceous-Needles:evergreenForest                     -5.15088293
+## Twigs/branches:grasslandHerbaceous-Needles:evergreenForest            -4.23627734
+## Woody material:grasslandHerbaceous-Needles:evergreenForest            -5.12261645
+## Flowers:shrubScrub-Needles:evergreenForest                            -5.51308669
+## Leaves:shrubScrub-Needles:evergreenForest                             -5.49527981
+## Mixed:shrubScrub-Needles:evergreenForest                              -2.70257009
+## Needles:shrubScrub-Needles:evergreenForest                            -1.16218392
+## Other:shrubScrub-Needles:evergreenForest                              -5.47768339
+## Seeds:shrubScrub-Needles:evergreenForest                              -5.50513844
+## Twigs/branches:shrubScrub-Needles:evergreenForest                     -5.08422409
+## Woody material:shrubScrub-Needles:evergreenForest                     -5.43583867
+## Seeds:evergreenForest-Other:evergreenForest                            2.02740353
+## Twigs/branches:evergreenForest-Other:evergreenForest                   3.99082063
+## Woody material:evergreenForest-Other:evergreenForest                   3.06919401
+## Flowers:grasslandHerbaceous-Other:evergreenForest                      2.27163060
+## Leaves:grasslandHerbaceous-Other:evergreenForest                       2.21211651
+## Mixed:grasslandHerbaceous-Other:evergreenForest                        4.23534033
+## Needles:grasslandHerbaceous-Other:evergreenForest                      7.34800378
+## Other:grasslandHerbaceous-Other:evergreenForest                        2.34754017
+## Seeds:grasslandHerbaceous-Other:evergreenForest                        2.25629017
+## Twigs/branches:grasslandHerbaceous-Other:evergreenForest               3.17167427
+## Woody material:grasslandHerbaceous-Other:evergreenForest               2.28495009
+## Flowers:shrubScrub-Other:evergreenForest                               1.90544801
+## Leaves:shrubScrub-Other:evergreenForest                                1.92419401
+## Mixed:shrubScrub-Other:evergreenForest                                 4.70013256
+## Needles:shrubScrub-Other:evergreenForest                               6.25782297
+## Other:shrubScrub-Other:evergreenForest                                 1.94142266
+## Seeds:shrubScrub-Other:evergreenForest                                 1.91358941
+## Twigs/branches:shrubScrub-Other:evergreenForest                        2.33560752
+## Woody material:shrubScrub-Other:evergreenForest                        1.98399294
+## Twigs/branches:evergreenForest-Seeds:evergreenForest                   4.00216679
+## Woody material:evergreenForest-Seeds:evergreenForest                   3.08054016
+## Flowers:grasslandHerbaceous-Seeds:evergreenForest                      2.28297676
+## Leaves:grasslandHerbaceous-Seeds:evergreenForest                       2.22346266
+## Mixed:grasslandHerbaceous-Seeds:evergreenForest                        4.24668648
+## Needles:grasslandHerbaceous-Seeds:evergreenForest                      7.35934994
+## Other:grasslandHerbaceous-Seeds:evergreenForest                        2.35888632
+## Seeds:grasslandHerbaceous-Seeds:evergreenForest                        2.26763632
+## Twigs/branches:grasslandHerbaceous-Seeds:evergreenForest               3.18302043
+## Woody material:grasslandHerbaceous-Seeds:evergreenForest               2.29629625
+## Flowers:shrubScrub-Seeds:evergreenForest                               1.91679417
+## Leaves:shrubScrub-Seeds:evergreenForest                                1.93554016
+## Mixed:shrubScrub-Seeds:evergreenForest                                 4.71147872
+## Needles:shrubScrub-Seeds:evergreenForest                               6.26916913
+## Other:shrubScrub-Seeds:evergreenForest                                 1.95276881
+## Seeds:shrubScrub-Seeds:evergreenForest                                 1.92493556
+## Twigs/branches:shrubScrub-Seeds:evergreenForest                        2.34695367
+## Woody material:shrubScrub-Seeds:evergreenForest                        1.99533909
+## Woody material:evergreenForest-Twigs/branches:evergreenForest          1.03031925
+## Flowers:grasslandHerbaceous-Twigs/branches:evergreenForest             0.24045875
+## Leaves:grasslandHerbaceous-Twigs/branches:evergreenForest              0.17955299
+## Mixed:grasslandHerbaceous-Twigs/branches:evergreenForest               2.21392390
+## Needles:grasslandHerbaceous-Twigs/branches:evergreenForest             5.31522493
+## Other:grasslandHerbaceous-Twigs/branches:evergreenForest               0.31612365
+## Seeds:grasslandHerbaceous-Twigs/branches:evergreenForest               0.22487365
+## Twigs/branches:grasslandHerbaceous-Twigs/branches:evergreenForest      1.13978423
+## Woody material:grasslandHerbaceous-Twigs/branches:evergreenForest      0.25329424
+## Flowers:shrubScrub-Twigs/branches:evergreenForest                     -0.13285922
+## Leaves:shrubScrub-Twigs/branches:evergreenForest                      -0.11468075
+## Mixed:shrubScrub-Twigs/branches:evergreenForest                        2.67143875
+## Needles:shrubScrub-Twigs/branches:evergreenForest                      4.21862621
+## Other:shrubScrub-Twigs/branches:evergreenForest                       -0.09722989
+## Seeds:shrubScrub-Twigs/branches:evergreenForest                       -0.12483458
+## Twigs/branches:shrubScrub-Twigs/branches:evergreenForest               0.29651662
+## Woody material:shrubScrub-Twigs/branches:evergreenForest              -0.05509796
+## Flowers:grasslandHerbaceous-Woody material:evergreenForest             1.07602587
+## Leaves:grasslandHerbaceous-Woody material:evergreenForest              1.01355685
+## Mixed:grasslandHerbaceous-Woody material:evergreenForest               3.06029604
+## Needles:grasslandHerbaceous-Woody material:evergreenForest             6.14898637
+## Other:grasslandHerbaceous-Woody material:evergreenForest               1.15141638
+## Seeds:grasslandHerbaceous-Woody material:evergreenForest               1.06016638
+## Twigs/branches:grasslandHerbaceous-Woody material:evergreenForest      1.97454537
+## Woody material:grasslandHerbaceous-Woody material:evergreenForest      1.08831838
+## Flowers:shrubScrub-Woody material:evergreenForest                      0.69462367
+## Leaves:shrubScrub-Woody material:evergreenForest                       0.71215128
+## Mixed:shrubScrub-Woody material:evergreenForest                        3.50977481
+## Needles:shrubScrub-Woody material:evergreenForest                      5.04508841
+## Other:shrubScrub-Woody material:evergreenForest                        0.72985713
+## Seeds:shrubScrub-Woody material:evergreenForest                        0.70251452
+## Twigs/branches:shrubScrub-Woody material:evergreenForest               1.12310046
+## Woody material:shrubScrub-Woody material:evergreenForest               0.77148588
+## Leaves:grasslandHerbaceous-Flowers:grasslandHerbaceous                 2.57603964
+## Mixed:grasslandHerbaceous-Flowers:grasslandHerbaceous                  4.52271942
+## Needles:grasslandHerbaceous-Flowers:grasslandHerbaceous                7.71333102
+## Other:grasslandHerbaceous-Flowers:grasslandHerbaceous                  2.70393464
+## Seeds:grasslandHerbaceous-Flowers:grasslandHerbaceous                  2.61268464
+## Twigs/branches:grasslandHerbaceous-Flowers:grasslandHerbaceous         3.53118688
+## Woody material:grasslandHerbaceous-Flowers:grasslandHerbaceous         2.64292231
+## Flowers:shrubScrub-Flowers:grasslandHerbaceous                         2.30581497
+## Leaves:shrubScrub-Flowers:grasslandHerbaceous                          2.32804714
+## Mixed:shrubScrub-Flowers:grasslandHerbaceous                           5.03832825
+## Needles:shrubScrub-Flowers:grasslandHerbaceous                         6.66364484
+## Other:shrubScrub-Flowers:grasslandHerbaceous                           2.34391326
+## Seeds:shrubScrub-Flowers:grasslandHerbaceous                           2.31467523
+## Twigs/branches:shrubScrub-Flowers:grasslandHerbaceous                  2.74078285
+## Woody material:shrubScrub-Flowers:grasslandHerbaceous                  2.38916827
+## Mixed:grasslandHerbaceous-Leaves:grasslandHerbaceous                   4.43974550
+## Needles:grasslandHerbaceous-Leaves:grasslandHerbaceous                 7.61022013
+## Other:grasslandHerbaceous-Leaves:grasslandHerbaceous                   2.60306574
+## Seeds:grasslandHerbaceous-Leaves:grasslandHerbaceous                   2.51181574
+## Twigs/branches:grasslandHerbaceous-Leaves:grasslandHerbaceous          3.42953329
+## Woody material:grasslandHerbaceous-Leaves:grasslandHerbaceous          2.54165609
+## Flowers:shrubScrub-Leaves:grasslandHerbaceous                          2.19409358
+## Leaves:shrubScrub-Leaves:grasslandHerbaceous                           2.21548579
+## Mixed:shrubScrub-Leaves:grasslandHerbaceous                            4.94208253
+## Needles:shrubScrub-Leaves:grasslandHerbaceous                          6.55061052
+## Other:shrubScrub-Leaves:grasslandHerbaceous                            2.23167983
+## Seeds:shrubScrub-Leaves:grasslandHerbaceous                            2.20278038
+## Twigs/branches:shrubScrub-Leaves:grasslandHerbaceous                   2.62790374
+## Woody material:shrubScrub-Leaves:grasslandHerbaceous                   2.27628916
+## Needles:grasslandHerbaceous-Mixed:grasslandHerbaceous                  7.38261937
+## Other:grasslandHerbaceous-Mixed:grasslandHerbaceous                    2.35622566
+## Seeds:grasslandHerbaceous-Mixed:grasslandHerbaceous                    2.26497566
+## Twigs/branches:grasslandHerbaceous-Mixed:grasslandHerbaceous           3.18946732
+## Woody material:grasslandHerbaceous-Mixed:grasslandHerbaceous           2.29825149
+## Flowers:shrubScrub-Mixed:grasslandHerbaceous                           2.03715052
+## Leaves:shrubScrub-Mixed:grasslandHerbaceous                            2.06516838
+## Mixed:shrubScrub-Mixed:grasslandHerbaceous                             4.65443561
+## Needles:shrubScrub-Mixed:grasslandHerbaceous                           6.40400351
+## Other:shrubScrub-Mixed:grasslandHerbaceous                             2.07878131
+## Seeds:shrubScrub-Mixed:grasslandHerbaceous                             2.04720938
+## Twigs/branches:shrubScrub-Mixed:grasslandHerbaceous                    2.48008071
+## Woody material:shrubScrub-Mixed:grasslandHerbaceous                    2.12846612
+## Other:grasslandHerbaceous-Needles:grasslandHerbaceous                 -2.55653947
+## Seeds:grasslandHerbaceous-Needles:grasslandHerbaceous                 -2.64778947
+## Twigs/branches:grasslandHerbaceous-Needles:grasslandHerbaceous        -1.73019176
+## Woody material:grasslandHerbaceous-Needles:grasslandHerbaceous        -2.61800979
+## Flowers:shrubScrub-Needles:grasslandHerbaceous                        -2.96718095
+## Leaves:shrubScrub-Needles:grasslandHerbaceous                         -2.94591907
+## Mixed:shrubScrub-Needles:grasslandHerbaceous                          -0.21681916
+## Needles:shrubScrub-Needles:grasslandHerbaceous                         1.38913220
+## Other:shrubScrub-Needles:grasslandHerbaceous                          -2.92967413
+## Seeds:shrubScrub-Needles:grasslandHerbaceous                          -2.95852105
+## Twigs/branches:shrubScrub-Needles:grasslandHerbaceous                 -2.53355046
+## Woody material:shrubScrub-Needles:grasslandHerbaceous                 -2.88516505
+## Seeds:grasslandHerbaceous-Other:grasslandHerbaceous                    2.50765611
+## Twigs/branches:grasslandHerbaceous-Other:grasslandHerbaceous           3.42601912
+## Woody material:grasslandHerbaceous-Other:grasslandHerbaceous           2.53782327
+## Flowers:shrubScrub-Other:grasslandHerbaceous                           2.19887058
+## Leaves:shrubScrub-Other:grasslandHerbaceous                            2.22095539
+## Mixed:shrubScrub-Other:grasslandHerbaceous                             4.93412210
+## Needles:shrubScrub-Other:grasslandHerbaceous                           6.55647016
+## Other:shrubScrub-Other:grasslandHerbaceous                             2.23687902
+## Seeds:shrubScrub-Other:grasslandHerbaceous                             2.20770040
+## Twigs/branches:shrubScrub-Other:grasslandHerbaceous                    2.63363538
+## Woody material:shrubScrub-Other:grasslandHerbaceous                    2.28202080
+## Twigs/branches:grasslandHerbaceous-Seeds:grasslandHerbaceous           3.51726912
+## Woody material:grasslandHerbaceous-Seeds:grasslandHerbaceous           2.62907327
+## Flowers:shrubScrub-Seeds:grasslandHerbaceous                           2.29012058
+## Leaves:shrubScrub-Seeds:grasslandHerbaceous                            2.31220539
+## Mixed:shrubScrub-Seeds:grasslandHerbaceous                             5.02537210
+## Needles:shrubScrub-Seeds:grasslandHerbaceous                           6.64772016
+## Other:shrubScrub-Seeds:grasslandHerbaceous                             2.32812902
+## Seeds:shrubScrub-Seeds:grasslandHerbaceous                             2.29895040
+## Twigs/branches:shrubScrub-Seeds:grasslandHerbaceous                    2.72488538
+## Woody material:shrubScrub-Seeds:grasslandHerbaceous                    2.37327080
+## Woody material:grasslandHerbaceous-Twigs/branches:grasslandHerbaceous  1.65833394
+## Flowers:shrubScrub-Twigs/branches:grasslandHerbaceous                  1.31581849
+## Leaves:shrubScrub-Twigs/branches:grasslandHerbaceous                   1.33761771
+## Mixed:shrubScrub-Twigs/branches:grasslandHerbaceous                    4.05634846
+## Needles:shrubScrub-Twigs/branches:grasslandHerbaceous                  5.67297172
+## Other:shrubScrub-Twigs/branches:grasslandHerbaceous                    1.35365282
+## Seeds:shrubScrub-Twigs/branches:grasslandHerbaceous                    1.32458932
+## Twigs/branches:shrubScrub-Twigs/branches:grasslandHerbaceous           1.75018969
+## Woody material:shrubScrub-Twigs/branches:grasslandHerbaceous           1.39857510
+## Flowers:shrubScrub-Woody material:grasslandHerbaceous                  2.23149510
+## Leaves:shrubScrub-Woody material:grasslandHerbaceous                   2.25343562
+## Mixed:shrubScrub-Woody material:grasslandHerbaceous                    4.96941799
+## Needles:shrubScrub-Woody material:grasslandHerbaceous                  6.58886918
+## Other:shrubScrub-Woody material:grasslandHerbaceous                    2.26941557
+## Seeds:shrubScrub-Woody material:grasslandHerbaceous                    2.24029511
+## Twigs/branches:shrubScrub-Woody material:grasslandHerbaceous           2.66606105
+## Woody material:shrubScrub-Woody material:grasslandHerbaceous           2.31444646
+## Leaves:shrubScrub-Flowers:shrubScrub                                   1.92648477
+## Mixed:shrubScrub-Flowers:shrubScrub                                    4.71791787
+## Needles:shrubScrub-Flowers:shrubScrub                                  6.25962171
+## Other:shrubScrub-Flowers:shrubScrub                                    1.94405289
+## Seeds:shrubScrub-Flowers:shrubScrub                                    1.91656874
+## Twigs/branches:shrubScrub-Flowers:shrubScrub                           2.33756804
+## Woody material:shrubScrub-Flowers:shrubScrub                           1.98595346
+## Mixed:shrubScrub-Leaves:shrubScrub                                     4.65477481
+## Needles:shrubScrub-Leaves:shrubScrub                                   6.19008841
+## Other:shrubScrub-Leaves:shrubScrub                                     1.87485713
+## Seeds:shrubScrub-Leaves:shrubScrub                                     1.84751452
+## Twigs/branches:shrubScrub-Leaves:shrubScrub                            2.26810046
+## Woody material:shrubScrub-Leaves:shrubScrub                            1.91648588
+## Needles:shrubScrub-Mixed:shrubScrub                                    4.57671112
+## Other:shrubScrub-Mixed:shrubScrub                                      0.25556530
+## Seeds:shrubScrub-Mixed:shrubScrub                                      0.22572816
+## Twigs/branches:shrubScrub-Mixed:shrubScrub                             0.65357537
+## Woody material:shrubScrub-Mixed:shrubScrub                             0.30196079
+## Other:shrubScrub-Needles:shrubScrub                                   -2.48683241
+## Seeds:shrubScrub-Needles:shrubScrub                                   -2.51409457
+## Twigs/branches:shrubScrub-Needles:shrubScrub                          -2.09374366
+## Woody material:shrubScrub-Needles:shrubScrub                          -2.44535825
+## Seeds:shrubScrub-Other:shrubScrub                                      1.84983111
+## Twigs/branches:shrubScrub-Other:shrubScrub                             2.27057903
+## Woody material:shrubScrub-Other:shrubScrub                             1.91896445
+## Twigs/branches:shrubScrub-Seeds:shrubScrub                             2.31888702
+## Woody material:shrubScrub-Seeds:shrubScrub                             1.96727244
+## Woody material:shrubScrub-Twigs/branches:shrubScrub                    1.48608955
+##                                                                           p adj
+## Leaves:evergreenForest-Flowers:evergreenForest                        1.0000000
+## Mixed:evergreenForest-Flowers:evergreenForest                         0.7778267
+## Needles:evergreenForest-Flowers:evergreenForest                       0.0000000
+## Other:evergreenForest-Flowers:evergreenForest                         1.0000000
+## Seeds:evergreenForest-Flowers:evergreenForest                         1.0000000
+## Twigs/branches:evergreenForest-Flowers:evergreenForest                0.0576184
+## Woody material:evergreenForest-Flowers:evergreenForest                0.9348463
+## Flowers:grasslandHerbaceous-Flowers:evergreenForest                   1.0000000
+## Leaves:grasslandHerbaceous-Flowers:evergreenForest                    1.0000000
+## Mixed:grasslandHerbaceous-Flowers:evergreenForest                     0.9999809
+## Needles:grasslandHerbaceous-Flowers:evergreenForest                   0.0000000
+## Other:grasslandHerbaceous-Flowers:evergreenForest                     1.0000000
+## Seeds:grasslandHerbaceous-Flowers:evergreenForest                     1.0000000
+## Twigs/branches:grasslandHerbaceous-Flowers:evergreenForest            0.9998164
+## Woody material:grasslandHerbaceous-Flowers:evergreenForest            1.0000000
+## Flowers:shrubScrub-Flowers:evergreenForest                            1.0000000
+## Leaves:shrubScrub-Flowers:evergreenForest                             1.0000000
+## Mixed:shrubScrub-Flowers:evergreenForest                              0.2255973
+## Needles:shrubScrub-Flowers:evergreenForest                            0.0000000
+## Other:shrubScrub-Flowers:evergreenForest                              1.0000000
+## Seeds:shrubScrub-Flowers:evergreenForest                              1.0000000
+## Twigs/branches:shrubScrub-Flowers:evergreenForest                     1.0000000
+## Woody material:shrubScrub-Flowers:evergreenForest                     1.0000000
+## Mixed:evergreenForest-Leaves:evergreenForest                          0.6690792
+## Needles:evergreenForest-Leaves:evergreenForest                        0.0000000
+## Other:evergreenForest-Leaves:evergreenForest                          1.0000000
+## Seeds:evergreenForest-Leaves:evergreenForest                          1.0000000
+## Twigs/branches:evergreenForest-Leaves:evergreenForest                 0.0330188
+## Woody material:evergreenForest-Leaves:evergreenForest                 0.8603312
+## Flowers:grasslandHerbaceous-Leaves:evergreenForest                    1.0000000
+## Leaves:grasslandHerbaceous-Leaves:evergreenForest                     1.0000000
+## Mixed:grasslandHerbaceous-Leaves:evergreenForest                      0.9999002
+## Needles:grasslandHerbaceous-Leaves:evergreenForest                    0.0000000
+## Other:grasslandHerbaceous-Leaves:evergreenForest                      1.0000000
+## Seeds:grasslandHerbaceous-Leaves:evergreenForest                      1.0000000
+## Twigs/branches:grasslandHerbaceous-Leaves:evergreenForest             0.9989083
+## Woody material:grasslandHerbaceous-Leaves:evergreenForest             1.0000000
+## Flowers:shrubScrub-Leaves:evergreenForest                             1.0000000
+## Leaves:shrubScrub-Leaves:evergreenForest                              1.0000000
+## Mixed:shrubScrub-Leaves:evergreenForest                               0.1595595
+## Needles:shrubScrub-Leaves:evergreenForest                             0.0000000
+## Other:shrubScrub-Leaves:evergreenForest                               1.0000000
+## Seeds:shrubScrub-Leaves:evergreenForest                               1.0000000
+## Twigs/branches:shrubScrub-Leaves:evergreenForest                      0.9999999
+## Woody material:shrubScrub-Leaves:evergreenForest                      1.0000000
+## Needles:evergreenForest-Mixed:evergreenForest                         0.0000000
+## Other:evergreenForest-Mixed:evergreenForest                           0.7484244
+## Seeds:evergreenForest-Mixed:evergreenForest                           0.7358868
+## Twigs/branches:evergreenForest-Mixed:evergreenForest                  1.0000000
+## Woody material:evergreenForest-Mixed:evergreenForest                  1.0000000
+## Flowers:grasslandHerbaceous-Mixed:evergreenForest                     0.8397321
+## Leaves:grasslandHerbaceous-Mixed:evergreenForest                      0.8215293
+## Mixed:grasslandHerbaceous-Mixed:evergreenForest                       1.0000000
+## Needles:grasslandHerbaceous-Mixed:evergreenForest                     0.0000863
+## Other:grasslandHerbaceous-Mixed:evergreenForest                       0.8971129
+## Seeds:grasslandHerbaceous-Mixed:evergreenForest                       0.8329319
+## Twigs/branches:grasslandHerbaceous-Mixed:evergreenForest              0.9999995
+## Woody material:grasslandHerbaceous-Mixed:evergreenForest              0.8600140
+## Flowers:shrubScrub-Mixed:evergreenForest                              0.6203713
+## Leaves:shrubScrub-Mixed:evergreenForest                               0.6564316
+## Mixed:shrubScrub-Mixed:evergreenForest                                1.0000000
+## Needles:shrubScrub-Mixed:evergreenForest                              0.0016783
+## Other:shrubScrub-Mixed:evergreenForest                                0.6730863
+## Seeds:shrubScrub-Mixed:evergreenForest                                0.6332449
+## Twigs/branches:shrubScrub-Mixed:evergreenForest                       0.9767066
+## Woody material:shrubScrub-Mixed:evergreenForest                       0.7336731
+## Other:evergreenForest-Needles:evergreenForest                         0.0000000
+## Seeds:evergreenForest-Needles:evergreenForest                         0.0000000
+## Twigs/branches:evergreenForest-Needles:evergreenForest                0.0000000
+## Woody material:evergreenForest-Needles:evergreenForest                0.0000000
+## Flowers:grasslandHerbaceous-Needles:evergreenForest                   0.0000000
+## Leaves:grasslandHerbaceous-Needles:evergreenForest                    0.0000000
+## Mixed:grasslandHerbaceous-Needles:evergreenForest                     0.0000000
+## Needles:grasslandHerbaceous-Needles:evergreenForest                   0.0354026
+## Other:grasslandHerbaceous-Needles:evergreenForest                     0.0000000
+## Seeds:grasslandHerbaceous-Needles:evergreenForest                     0.0000000
+## Twigs/branches:grasslandHerbaceous-Needles:evergreenForest            0.0000000
+## Woody material:grasslandHerbaceous-Needles:evergreenForest            0.0000000
+## Flowers:shrubScrub-Needles:evergreenForest                            0.0000000
+## Leaves:shrubScrub-Needles:evergreenForest                             0.0000000
+## Mixed:shrubScrub-Needles:evergreenForest                              0.0000000
+## Needles:shrubScrub-Needles:evergreenForest                            0.0000011
+## Other:shrubScrub-Needles:evergreenForest                              0.0000000
+## Seeds:shrubScrub-Needles:evergreenForest                              0.0000000
+## Twigs/branches:shrubScrub-Needles:evergreenForest                     0.0000000
+## Woody material:shrubScrub-Needles:evergreenForest                     0.0000000
+## Seeds:evergreenForest-Other:evergreenForest                           1.0000000
+## Twigs/branches:evergreenForest-Other:evergreenForest                  0.0505597
+## Woody material:evergreenForest-Other:evergreenForest                  0.9173794
+## Flowers:grasslandHerbaceous-Other:evergreenForest                     1.0000000
+## Leaves:grasslandHerbaceous-Other:evergreenForest                      1.0000000
+## Mixed:grasslandHerbaceous-Other:evergreenForest                       0.9999668
+## Needles:grasslandHerbaceous-Other:evergreenForest                     0.0000000
+## Other:grasslandHerbaceous-Other:evergreenForest                       1.0000000
+## Seeds:grasslandHerbaceous-Other:evergreenForest                       1.0000000
+## Twigs/branches:grasslandHerbaceous-Other:evergreenForest              0.9996690
+## Woody material:grasslandHerbaceous-Other:evergreenForest              1.0000000
+## Flowers:shrubScrub-Other:evergreenForest                              1.0000000
+## Leaves:shrubScrub-Other:evergreenForest                               1.0000000
+## Mixed:shrubScrub-Other:evergreenForest                                0.2058815
+## Needles:shrubScrub-Other:evergreenForest                              0.0000000
+## Other:shrubScrub-Other:evergreenForest                                1.0000000
+## Seeds:shrubScrub-Other:evergreenForest                                1.0000000
+## Twigs/branches:shrubScrub-Other:evergreenForest                       1.0000000
+## Woody material:shrubScrub-Other:evergreenForest                       1.0000000
+## Twigs/branches:evergreenForest-Seeds:evergreenForest                  0.0472061
+## Woody material:evergreenForest-Seeds:evergreenForest                  0.9092750
+## Flowers:grasslandHerbaceous-Seeds:evergreenForest                     1.0000000
+## Leaves:grasslandHerbaceous-Seeds:evergreenForest                      1.0000000
+## Mixed:grasslandHerbaceous-Seeds:evergreenForest                       0.9999599
+## Needles:grasslandHerbaceous-Seeds:evergreenForest                     0.0000000
+## Other:grasslandHerbaceous-Seeds:evergreenForest                       1.0000000
+## Seeds:grasslandHerbaceous-Seeds:evergreenForest                       1.0000000
+## Twigs/branches:grasslandHerbaceous-Seeds:evergreenForest              0.9995923
+## Woody material:grasslandHerbaceous-Seeds:evergreenForest              1.0000000
+## Flowers:shrubScrub-Seeds:evergreenForest                              1.0000000
+## Leaves:shrubScrub-Seeds:evergreenForest                               1.0000000
+## Mixed:shrubScrub-Seeds:evergreenForest                                0.1976538
+## Needles:shrubScrub-Seeds:evergreenForest                              0.0000000
+## Other:shrubScrub-Seeds:evergreenForest                                1.0000000
+## Seeds:shrubScrub-Seeds:evergreenForest                                1.0000000
+## Twigs/branches:shrubScrub-Seeds:evergreenForest                       1.0000000
+## Woody material:shrubScrub-Seeds:evergreenForest                       1.0000000
+## Woody material:evergreenForest-Twigs/branches:evergreenForest         0.9934408
+## Flowers:grasslandHerbaceous-Twigs/branches:evergreenForest            0.1553770
+## Leaves:grasslandHerbaceous-Twigs/branches:evergreenForest             0.1230330
+## Mixed:grasslandHerbaceous-Twigs/branches:evergreenForest              0.9999929
+## Needles:grasslandHerbaceous-Twigs/branches:evergreenForest            0.0001009
+## Other:grasslandHerbaceous-Twigs/branches:evergreenForest              0.2125736
+## Seeds:grasslandHerbaceous-Twigs/branches:evergreenForest              0.1463923
+## Twigs/branches:grasslandHerbaceous-Twigs/branches:evergreenForest     0.9819556
+## Woody material:grasslandHerbaceous-Twigs/branches:evergreenForest     0.1662533
+## Flowers:shrubScrub-Twigs/branches:evergreenForest                     0.0208356
+## Leaves:shrubScrub-Twigs/branches:evergreenForest                      0.0233702
+## Mixed:shrubScrub-Twigs/branches:evergreenForest                       1.0000000
+## Needles:shrubScrub-Twigs/branches:evergreenForest                     0.0019104
+## Other:shrubScrub-Twigs/branches:evergreenForest                       0.0264478
+## Seeds:shrubScrub-Twigs/branches:evergreenForest                       0.0219725
+## Twigs/branches:shrubScrub-Twigs/branches:evergreenForest              0.2503203
+## Woody material:shrubScrub-Twigs/branches:evergreenForest              0.0349431
+## Flowers:grasslandHerbaceous-Woody material:evergreenForest            0.9653227
+## Leaves:grasslandHerbaceous-Woody material:evergreenForest             0.9578392
+## Mixed:grasslandHerbaceous-Woody material:evergreenForest              1.0000000
+## Needles:grasslandHerbaceous-Woody material:evergreenForest            0.0000000
+## Other:grasslandHerbaceous-Woody material:evergreenForest              0.9849724
+## Seeds:grasslandHerbaceous-Woody material:evergreenForest              0.9625766
+## Twigs/branches:grasslandHerbaceous-Woody material:evergreenForest     1.0000000
+## Woody material:grasslandHerbaceous-Woody material:evergreenForest     0.9732104
+## Flowers:shrubScrub-Woody material:evergreenForest                     0.8153558
+## Leaves:shrubScrub-Woody material:evergreenForest                      0.8460174
+## Mixed:shrubScrub-Woody material:evergreenForest                       0.9969846
+## Needles:shrubScrub-Woody material:evergreenForest                     0.0000001
+## Other:shrubScrub-Woody material:evergreenForest                       0.8604142
+## Seeds:shrubScrub-Woody material:evergreenForest                       0.8267656
+## Twigs/branches:shrubScrub-Woody material:evergreenForest              0.9993323
+## Woody material:shrubScrub-Woody material:evergreenForest              0.9053484
+## Leaves:grasslandHerbaceous-Flowers:grasslandHerbaceous                1.0000000
+## Mixed:grasslandHerbaceous-Flowers:grasslandHerbaceous                 0.9999603
+## Needles:grasslandHerbaceous-Flowers:grasslandHerbaceous               0.0000000
+## Other:grasslandHerbaceous-Flowers:grasslandHerbaceous                 1.0000000
+## Seeds:grasslandHerbaceous-Flowers:grasslandHerbaceous                 1.0000000
+## Twigs/branches:grasslandHerbaceous-Flowers:grasslandHerbaceous        0.9997859
+## Woody material:grasslandHerbaceous-Flowers:grasslandHerbaceous        1.0000000
+## Flowers:shrubScrub-Flowers:grasslandHerbaceous                        1.0000000
+## Leaves:shrubScrub-Flowers:grasslandHerbaceous                         1.0000000
+## Mixed:shrubScrub-Flowers:grasslandHerbaceous                          0.3178625
+## Needles:shrubScrub-Flowers:grasslandHerbaceous                        0.0000000
+## Other:shrubScrub-Flowers:grasslandHerbaceous                          1.0000000
+## Seeds:shrubScrub-Flowers:grasslandHerbaceous                          1.0000000
+## Twigs/branches:shrubScrub-Flowers:grasslandHerbaceous                 1.0000000
+## Woody material:shrubScrub-Flowers:grasslandHerbaceous                 1.0000000
+## Mixed:grasslandHerbaceous-Leaves:grasslandHerbaceous                  0.9999639
+## Needles:grasslandHerbaceous-Leaves:grasslandHerbaceous                0.0000000
+## Other:grasslandHerbaceous-Leaves:grasslandHerbaceous                  1.0000000
+## Seeds:grasslandHerbaceous-Leaves:grasslandHerbaceous                  1.0000000
+## Twigs/branches:grasslandHerbaceous-Leaves:grasslandHerbaceous         0.9997744
+## Woody material:grasslandHerbaceous-Leaves:grasslandHerbaceous         1.0000000
+## Flowers:shrubScrub-Leaves:grasslandHerbaceous                         1.0000000
+## Leaves:shrubScrub-Leaves:grasslandHerbaceous                          1.0000000
+## Mixed:shrubScrub-Leaves:grasslandHerbaceous                           0.2890489
+## Needles:shrubScrub-Leaves:grasslandHerbaceous                         0.0000000
+## Other:shrubScrub-Leaves:grasslandHerbaceous                           1.0000000
+## Seeds:shrubScrub-Leaves:grasslandHerbaceous                           1.0000000
+## Twigs/branches:shrubScrub-Leaves:grasslandHerbaceous                  1.0000000
+## Woody material:shrubScrub-Leaves:grasslandHerbaceous                  1.0000000
+## Needles:grasslandHerbaceous-Mixed:grasslandHerbaceous                 0.0024284
+## Other:grasslandHerbaceous-Mixed:grasslandHerbaceous                   0.9999908
+## Seeds:grasslandHerbaceous-Mixed:grasslandHerbaceous                   0.9999581
+## Twigs/branches:grasslandHerbaceous-Mixed:grasslandHerbaceous          1.0000000
+## Woody material:grasslandHerbaceous-Mixed:grasslandHerbaceous          0.9999779
+## Flowers:shrubScrub-Mixed:grasslandHerbaceous                          0.9998753
+## Leaves:shrubScrub-Mixed:grasslandHerbaceous                           0.9999310
+## Mixed:shrubScrub-Mixed:grasslandHerbaceous                            0.9999731
+## Needles:shrubScrub-Mixed:grasslandHerbaceous                          0.0273593
+## Other:shrubScrub-Mixed:grasslandHerbaceous                            0.9999409
+## Seeds:shrubScrub-Mixed:grasslandHerbaceous                            0.9998963
+## Twigs/branches:shrubScrub-Mixed:grasslandHerbaceous                   1.0000000
+## Woody material:shrubScrub-Mixed:grasslandHerbaceous                   0.9999778
+## Other:grasslandHerbaceous-Needles:grasslandHerbaceous                 0.0000000
+## Seeds:grasslandHerbaceous-Needles:grasslandHerbaceous                 0.0000000
+## Twigs/branches:grasslandHerbaceous-Needles:grasslandHerbaceous        0.0000002
+## Woody material:grasslandHerbaceous-Needles:grasslandHerbaceous        0.0000000
+## Flowers:shrubScrub-Needles:grasslandHerbaceous                        0.0000000
+## Leaves:shrubScrub-Needles:grasslandHerbaceous                         0.0000000
+## Mixed:shrubScrub-Needles:grasslandHerbaceous                          0.0178115
+## Needles:shrubScrub-Needles:grasslandHerbaceous                        0.9998496
+## Other:shrubScrub-Needles:grasslandHerbaceous                          0.0000000
+## Seeds:shrubScrub-Needles:grasslandHerbaceous                          0.0000000
+## Twigs/branches:shrubScrub-Needles:grasslandHerbaceous                 0.0000000
+## Woody material:shrubScrub-Needles:grasslandHerbaceous                 0.0000000
+## Seeds:grasslandHerbaceous-Other:grasslandHerbaceous                   1.0000000
+## Twigs/branches:grasslandHerbaceous-Other:grasslandHerbaceous          0.9999580
+## Woody material:grasslandHerbaceous-Other:grasslandHerbaceous          1.0000000
+## Flowers:shrubScrub-Other:grasslandHerbaceous                          1.0000000
+## Leaves:shrubScrub-Other:grasslandHerbaceous                           1.0000000
+## Mixed:shrubScrub-Other:grasslandHerbaceous                            0.3929171
+## Needles:shrubScrub-Other:grasslandHerbaceous                          0.0000000
+## Other:shrubScrub-Other:grasslandHerbaceous                            1.0000000
+## Seeds:shrubScrub-Other:grasslandHerbaceous                            1.0000000
+## Twigs/branches:shrubScrub-Other:grasslandHerbaceous                   1.0000000
+## Woody material:shrubScrub-Other:grasslandHerbaceous                   1.0000000
+## Twigs/branches:grasslandHerbaceous-Seeds:grasslandHerbaceous          0.9997661
+## Woody material:grasslandHerbaceous-Seeds:grasslandHerbaceous          1.0000000
+## Flowers:shrubScrub-Seeds:grasslandHerbaceous                          1.0000000
+## Leaves:shrubScrub-Seeds:grasslandHerbaceous                           1.0000000
+## Mixed:shrubScrub-Seeds:grasslandHerbaceous                            0.3086423
+## Needles:shrubScrub-Seeds:grasslandHerbaceous                          0.0000000
+## Other:shrubScrub-Seeds:grasslandHerbaceous                            1.0000000
+## Seeds:shrubScrub-Seeds:grasslandHerbaceous                            1.0000000
+## Twigs/branches:shrubScrub-Seeds:grasslandHerbaceous                   1.0000000
+## Woody material:shrubScrub-Seeds:grasslandHerbaceous                   1.0000000
+## Woody material:grasslandHerbaceous-Twigs/branches:grasslandHerbaceous 0.9998831
+## Flowers:shrubScrub-Twigs/branches:grasslandHerbaceous                 0.9984073
+## Leaves:shrubScrub-Twigs/branches:grasslandHerbaceous                  0.9990989
+## Mixed:shrubScrub-Twigs/branches:grasslandHerbaceous                   0.9883079
+## Needles:shrubScrub-Twigs/branches:grasslandHerbaceous                 0.0000043
+## Other:shrubScrub-Twigs/branches:grasslandHerbaceous                   0.9992548
+## Seeds:shrubScrub-Twigs/branches:grasslandHerbaceous                   0.9986731
+## Twigs/branches:shrubScrub-Twigs/branches:grasslandHerbaceous          1.0000000
+## Woody material:shrubScrub-Twigs/branches:grasslandHerbaceous          0.9997323
+## Flowers:shrubScrub-Woody material:grasslandHerbaceous                 1.0000000
+## Leaves:shrubScrub-Woody material:grasslandHerbaceous                  1.0000000
+## Mixed:shrubScrub-Woody material:grasslandHerbaceous                   0.3382995
+## Needles:shrubScrub-Woody material:grasslandHerbaceous                 0.0000000
+## Other:shrubScrub-Woody material:grasslandHerbaceous                   1.0000000
+## Seeds:shrubScrub-Woody material:grasslandHerbaceous                   1.0000000
+## Twigs/branches:shrubScrub-Woody material:grasslandHerbaceous          1.0000000
+## Woody material:shrubScrub-Woody material:grasslandHerbaceous          1.0000000
+## Leaves:shrubScrub-Flowers:shrubScrub                                  1.0000000
+## Mixed:shrubScrub-Flowers:shrubScrub                                   0.1324031
+## Needles:shrubScrub-Flowers:shrubScrub                                 0.0000000
+## Other:shrubScrub-Flowers:shrubScrub                                   1.0000000
+## Seeds:shrubScrub-Flowers:shrubScrub                                   1.0000000
+## Twigs/branches:shrubScrub-Flowers:shrubScrub                          0.9999998
+## Woody material:shrubScrub-Flowers:shrubScrub                          1.0000000
+## Mixed:shrubScrub-Leaves:shrubScrub                                    0.1468958
+## Needles:shrubScrub-Leaves:shrubScrub                                  0.0000000
+## Other:shrubScrub-Leaves:shrubScrub                                    1.0000000
+## Seeds:shrubScrub-Leaves:shrubScrub                                    1.0000000
+## Twigs/branches:shrubScrub-Leaves:shrubScrub                           1.0000000
+## Woody material:shrubScrub-Leaves:shrubScrub                           1.0000000
+## Needles:shrubScrub-Mixed:shrubScrub                                   0.1840347
+## Other:shrubScrub-Mixed:shrubScrub                                     0.1556683
+## Seeds:shrubScrub-Mixed:shrubScrub                                     0.1376605
+## Twigs/branches:shrubScrub-Mixed:shrubScrub                            0.5427234
+## Woody material:shrubScrub-Mixed:shrubScrub                            0.1875831
+## Other:shrubScrub-Needles:shrubScrub                                   0.0000000
+## Seeds:shrubScrub-Needles:shrubScrub                                   0.0000000
+## Twigs/branches:shrubScrub-Needles:shrubScrub                          0.0000000
+## Woody material:shrubScrub-Needles:shrubScrub                          0.0000000
+## Seeds:shrubScrub-Other:shrubScrub                                     1.0000000
+## Twigs/branches:shrubScrub-Other:shrubScrub                            1.0000000
+## Woody material:shrubScrub-Other:shrubScrub                            1.0000000
+## Twigs/branches:shrubScrub-Seeds:shrubScrub                            0.9999999
+## Woody material:shrubScrub-Seeds:shrubScrub                            1.0000000
+## Woody material:shrubScrub-Twigs/branches:shrubScrub                   1.0000000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Litter.interaction <-}\StringTok{ }\KeywordTok{with}\NormalTok{(Litter, }\KeywordTok{interaction}\NormalTok{(functionalGroup, nlcdClass)) }\CommentTok{# Finds interaction between two groupings}
+\NormalTok{Litter.anova}\FloatTok{.2}\NormalTok{way5 <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Litter, dryMass }\OperatorTok{~}\StringTok{ }\NormalTok{Litter.interaction)}
+
+\NormalTok{Litter.groups <-}\StringTok{ }\KeywordTok{HSD.test}\NormalTok{(Litter.anova}\FloatTok{.2}\NormalTok{way5, }\StringTok{"Litter.interaction"}\NormalTok{, }\DataTypeTok{group =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{Litter.groups}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $statistics
+##    MSerror   Df     Mean       CV
+##   12.21141 1668 1.185757 294.7049
+## 
+## $parameters
+##    test             name.t ntr StudentizedRange alpha
+##   Tukey Litter.interaction  24         5.152623  0.05
+## 
+## $means
+##                                        dryMass         std  r   Min   Max
+## Flowers.evergreenForest            0.119625000  0.17831805 80 0.000  0.96
+## Flowers.grasslandHerbaceous        0.005425532  0.01342571 47 0.000  0.08
+## Flowers.shrubScrub                 0.015505618  0.06134406 89 0.000  0.51
+## Leaves.evergreenForest             0.016025641  0.06633425 78 0.000  0.53
+## Leaves.grasslandHerbaceous         0.030471698  0.06550297 53 0.000  0.30
+## Leaves.shrubScrub                  0.058936170  0.16177256 94 0.000  1.13
+## Mixed.evergreenForest              1.624375000  2.17737389 48 0.000  9.36
+## Mixed.grasslandHerbaceous          1.129000000  1.84876744 20 0.000  5.93
+## Mixed.shrubScrub                   2.266184211  6.21960191 38 0.005 24.60
+## Needles.evergreenForest            7.431888889  8.73545377 90 0.820 42.84
+## Needles.grasslandHerbaceous        5.178888889 10.50178752 54 0.005 54.23
+## Needles.shrubScrub                 4.406288660  5.04363343 97 0.040 25.32
+## Other.evergreenForest              0.084807692  0.13335687 78 0.000  0.56
+## Other.grasslandHerbaceous          0.096666667  0.34639378 48 0.000  2.29
+## Other.shrubScrub                   0.066576087  0.22538481 92 0.000  1.68
+## Seeds.evergreenForest              0.073461538  0.23380715 78 0.000  1.29
+## Seeds.grasslandHerbaceous          0.005416667  0.01573833 48 0.000  0.10
+## Seeds.shrubScrub                   0.028777778  0.10191236 90 0.000  0.73
+## Twigs/branches.evergreenForest     2.079294118  5.10954482 85 0.000 26.64
+## Twigs/branches.grasslandHerbaceous 0.949900000  3.70166020 50 0.000 21.13
+## Twigs/branches.shrubScrub          0.479583333  0.92559331 96 0.000  5.21
+## Woody material.evergreenForest     1.203936170  2.51804689 94 0.000 18.13
+## Woody material.grasslandHerbaceous 0.048877551  0.11809365 49 0.000  0.58
+## Woody material.shrubScrub          0.127968750  0.35611765 96 0.000  2.52
+##                                       Q25    Q50    Q75
+## Flowers.evergreenForest            0.0050 0.0600 0.1625
+## Flowers.grasslandHerbaceous        0.0000 0.0000 0.0050
+## Flowers.shrubScrub                 0.0000 0.0050 0.0050
+## Leaves.evergreenForest             0.0000 0.0000 0.0050
+## Leaves.grasslandHerbaceous         0.0000 0.0050 0.0200
+## Leaves.shrubScrub                  0.0000 0.0050 0.0200
+## Mixed.evergreenForest              0.3400 0.7450 1.6500
+## Mixed.grasslandHerbaceous          0.0050 0.0500 1.8525
+## Mixed.shrubScrub                   0.0575 0.1500 0.9575
+## Needles.evergreenForest            2.4100 3.7350 8.8475
+## Needles.grasslandHerbaceous        0.3200 1.8950 4.1175
+## Needles.shrubScrub                 1.0600 2.1900 6.4000
+## Other.evergreenForest              0.0000 0.0050 0.1500
+## Other.grasslandHerbaceous          0.0000 0.0025 0.0400
+## Other.shrubScrub                   0.0000 0.0025 0.0325
+## Seeds.evergreenForest              0.0000 0.0050 0.0400
+## Seeds.grasslandHerbaceous          0.0000 0.0000 0.0050
+## Seeds.shrubScrub                   0.0000 0.0000 0.0050
+## Twigs/branches.evergreenForest     0.0000 0.2400 1.3300
+## Twigs/branches.grasslandHerbaceous 0.0050 0.0600 0.3375
+## Twigs/branches.shrubScrub          0.0000 0.0700 0.4750
+## Woody material.evergreenForest     0.0325 0.2400 1.2975
+## Woody material.grasslandHerbaceous 0.0000 0.0050 0.0200
+## Woody material.shrubScrub          0.0000 0.0050 0.0725
+## 
+## $comparison
+## NULL
+## 
+## $groups
+##                                        dryMass groups
+## Needles.evergreenForest            7.431888889      a
+## Needles.grasslandHerbaceous        5.178888889      b
+## Needles.shrubScrub                 4.406288660     bc
+## Mixed.shrubScrub                   2.266184211     cd
+## Twigs/branches.evergreenForest     2.079294118      d
+## Mixed.evergreenForest              1.624375000      d
+## Woody material.evergreenForest     1.203936170      d
+## Mixed.grasslandHerbaceous          1.129000000      d
+## Twigs/branches.grasslandHerbaceous 0.949900000      d
+## Twigs/branches.shrubScrub          0.479583333      d
+## Woody material.shrubScrub          0.127968750      d
+## Flowers.evergreenForest            0.119625000      d
+## Other.grasslandHerbaceous          0.096666667      d
+## Other.evergreenForest              0.084807692      d
+## Seeds.evergreenForest              0.073461538      d
+## Other.shrubScrub                   0.066576087      d
+## Leaves.shrubScrub                  0.058936170      d
+## Woody material.grasslandHerbaceous 0.048877551      d
+## Leaves.grasslandHerbaceous         0.030471698      d
+## Seeds.shrubScrub                   0.028777778      d
+## Leaves.evergreenForest             0.016025641      d
+## Flowers.shrubScrub                 0.015505618      d
+## Flowers.grasslandHerbaceous        0.005425532      d
+## Seeds.grasslandHerbaceous          0.005416667      d
+## 
+## attr(,"class")
+## [1] "group"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Plot the results}
+\CommentTok{# Edit this graph to make it more visually appealing.}
+\CommentTok{# Add letters to represent statistical groupings.}
+\NormalTok{stat.letters <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{match}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(Litter.groups}\OperatorTok{$}\NormalTok{groups),}\KeywordTok{levels}\NormalTok{(Litter.interaction)),}
+                  \KeywordTok{as.character}\NormalTok{(Litter.groups}\OperatorTok{$}\NormalTok{groups[[}\DecValTok{2}\NormalTok{]]))}
+\KeywordTok{colnames}\NormalTok{(stat.letters) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Order"}\NormalTok{, }\StringTok{"Letter"}\NormalTok{)}
+\KeywordTok{rownames}\NormalTok{(stat.letters) <-}\StringTok{ }\KeywordTok{rownames}\NormalTok{(Litter.groups}\OperatorTok{$}\NormalTok{groups)}
+\NormalTok{stat.letters <-}\StringTok{ }\NormalTok{stat.letters[}\KeywordTok{order}\NormalTok{(stat.letters}\OperatorTok{$}\NormalTok{Order),]}
+
+\NormalTok{Litter.anova.plot <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(Litter, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ dryMass, }\DataTypeTok{x =}\NormalTok{ nlcdClass, }\DataTypeTok{color =}\NormalTok{ functionalGroup)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"nlcd Class"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Mass (g)"}\NormalTok{, }\DataTypeTok{color =} \StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_ordinal}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_summary}\NormalTok{(}\DataTypeTok{geom =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{fun.y =}\NormalTok{ max, }\DataTypeTok{vjust =} \DecValTok{-1}\NormalTok{, }\DataTypeTok{size =} \FloatTok{3.5}\NormalTok{,}
+               \DataTypeTok{position =} \KeywordTok{position_dodge}\NormalTok{(}\FloatTok{0.7}\NormalTok{),}
+               \DataTypeTok{label =} \KeywordTok{as.character}\NormalTok{(stat.letters}\OperatorTok{$}\NormalTok{Letter))}
+
+\KeywordTok{print}\NormalTok{(Litter.anova.plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11_GLMs_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\end{document}

@@ -63,28 +63,28 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 ```{r}
 
 summary(EPAair$Ozone)
-EPAair.subsample <- sample_n(EPAair, 5000)
+EPAair.subsample <- sample_n(EPAair, 5000) # Takes 5,000 random samples
 
 # Evaluate assumption of normal distribution
-shapiro.test((EPAair.subsample$Ozone))
+shapiro.test((EPAair.subsample$Ozone)) # Can only take up to 5,000 points
 ggplot(EPAair, aes(x = Ozone)) +
-  geom_histogram() 
-qqnorm(EPAair$Ozone); qqline(EPAair$Ozone)
+  geom_histogram() # Right-skewed
+qqnorm(EPAair$Ozone); qqline(EPAair$Ozone) # QQ plot and QQ line in same line of code
 
 O3.onesample <- t.test(EPAair$Ozone, mu = 50, alternative = "less")
 O3.onesample
 
 Ozone.plot <- ggplot(EPAair, aes(x = Ozone)) +
-  #geom_density(stat = "count", fill = "gray") +
-  geom_density(fill = "gray") +
+  geom_density(stat = "count", fill = "gray") + # Shows actual count (can specify bins)
+  #geom_density(fill = "gray") + # Uses "density" (percent of total count)
   geom_vline(xintercept = 50, color = "#238b45", lty = 2, size = 0.9) +
-  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0))
+  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) # Specifies axes start at 0.
 print(Ozone.plot)
 ```
 
 Write a sentence or two about the results of this test. Include both the results of the test and an interpretation that puts the findings in context of the resarch question.
 
-> 
+> The majority of the observations are below the test-value (50), as shown on the density plot. This result suggests that the mean of the samples is likely to be less than 50. The t-test results agree with this conclusion, rejecting the null hypothesis that the mean is equal to or greater than 50. From this, we can conclude that the mean ozone level is less than 50 ppm (i.e., the ozone levels are in the "good" range) at the 99% confidence level (p-value less than 0.01). In other words, performing this sample 100 times should yield a mean less than 50 ppm at least 99 times. ** EPA ozone measurements for 2018-2019 were significantly lower than 50, the AQI threshold for "good" air quality (one sample t-test: t = -57.98, p < 0.0001).
 
 ### Two-sample t-test
 The two-sample *t* test is used to test the hypothesis that the mean of two samples is equivalent. Unlike the one-sample tests, a two-sample test requires a second assumption that the variance of the two groups is equivalent. Are Ozone levels different between 2018 and 2019?
@@ -98,15 +98,16 @@ ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
   geom_freqpoly()
 
 # Format as a t-test
-O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year)
+O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year) # Tests for means being different
 O3.twosample
 O3.twosample$p.value
 
 # Format as a GLM
-O3.twosample2 <- lm(EPAair$Ozone ~ EPAair$Year)
-summary(O3.twosample2)
+O3.twosample2 <- lm(EPAair$Ozone ~ EPAair$Year) # Year treated as continuous
+summary(O3.twosample2) # Have to use "summary" to get results from lm
 
-plot(O3.twosample2)
+plot(O3.twosample2) # Doesn't work for t.test results
+#par(mfrow = c(2,2)) # Shows four plots at a time
 ```
 
 ### Non-parametric equivalent of t-test: Wilcoxon test
@@ -129,13 +130,36 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 3. geom_violin of ozone divided by year, with the 0.5 quantile marked as a horizontal line. Add letters representing a significant difference between 2018 and 2019. 
 
 ```{r}
+library(viridis)
 
+O3.density.plot <- ggplot(EPAair) +
+  geom_density(aes(x = Ozone, fill = as.factor(Year)), alpha = 0.7) +
+  scale_fill_viridis(discrete = TRUE, end = 0.5) +
+  labs(x = "Ozone (ppm)", fill = "")
+
+print(O3.density.plot)
+
+
+O3.box.plot <- ggplot(EPAair, aes(y = Ozone)) +
+  geom_boxplot(aes(color = as.factor(Year))) +
+  scale_color_viridis(discrete = TRUE, end = 0.5) +
+  labs(y = "Ozone (ppm)", color = "")
+print(O3.box.plot)
+
+
+O3.violin.plot <- ggplot(EPAair) +
+  geom_violin(aes(x = as.factor(Year), y = Ozone, color = as.factor(Year)),
+              draw_quantiles = 0.5) +
+  scale_color_viridis(discrete = TRUE, end = 0.5) +
+  labs(y = "Ozone (ppm)", color = "")
+
+print(O3.violin.plot)
 
 ```
 
 Now, write a summary of your findings, incorporating statistical output, reference to the figure(s), and a contextual interpretation.
 
-> 
+> The mean between the ozone levels for 2018 and 2019 are statistically significantly different. However, this difference is small and potentially practically unimportant (two-sample t test: t = ...) 
 
 
 
