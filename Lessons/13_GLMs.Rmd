@@ -53,7 +53,11 @@ summary(TNancova.interaction)
 TNplot <- ggplot(PeterPaul.chem.nutrients, aes(x = depth, y = tn_ug, color = lakename)) + 
   geom_point() + 
   geom_smooth(method = "lm", se = FALSE) +
-  xlim(0, 10)
+  xlim(0, 10) +
+  labs(x = "Depth, m", y = expression(TN ~ (mu*g/L)), color ="") +
+  #scale_color_brewer(palette="Dark3")
+  scale_color_manual(values=c("darkblue","lightblue")) +
+  xlim(0,10)
 print(TNplot)
 
 # Make the graph attractive
@@ -63,7 +67,7 @@ print(TNplot)
 
 **Hierarchical models,** or **mixed-effects models,** are a type of linear model in which explanatory variables are given a model whose parameters are also estimated by the data. The coefficients associated with explanatory variables thus may not be a single value but instead be sampled from a distribution, called the hyper-distribution, which is defined by the modeler. The advantage of the hierarchical model is that it builds capacity to describe multiple layers of stochasticity, which enables accounting of all aspects of uncertainty in a system. Specifically, we can separately model the process of interest and the sampling process. 
 
-The coefficients of a hierarchical model are divided into two categories: **fixed effects** and **random effects.** A **fixed effect** is a factor whose levels are experimentally determined or whose interest lies in the effects of each level (e.g., covariates, treatments, interactions). A **random effect** is a factor whose levels are sampled from a larger population, or whose interest lies in the variation among them rather than the specific effect of each level. In choosing whether you are dealing with a fixed or a random effect, consider the following questions: 
+The coefficients of a hierarchical model are divided into two categories: **fixed effects** and **random effects.** A **fixed effect** is a factor whose levels are experimentally determined or whose interest lies in the effects of each level (e.g., covariates, treatments, interactions). A **random effect** is (must be) a factor whose levels are sampled from a larger population, or whose interest lies in the variation among them rather than the specific effect of each level. In choosing whether you are dealing with a fixed or a random effect, consider the following questions: 
 
   + Do you have a particular interest in the studied factor level?
 
@@ -101,12 +105,12 @@ Next, we will build a hierarchical model. We will use the package `nlme` for our
 ```{r}
 TempTest.mixed <- lme(data = NTL.summertemp,
                      temperature_C ~ year4, 
-                     random = ~1|lakename)
+                     random = ~1|lakename) # Sets random effect to lakename
 summary(TempTest.mixed)
-rsquared(TempTest.mixed)
+rsquared(TempTest.mixed) # Marginal is just fixed effects, Conditional is R2 including RE
 
 # Compare the random effects model with the fixed effects model
-TempTest.fixed <- gls(data = NTL.summertemp,
+TempTest.fixed <- gls(data = NTL.summertemp, # gls includes add'l info found in lme output
                       temperature_C ~ year4)
 summary(TempTest.fixed)
 
@@ -121,10 +125,10 @@ ggplot(NTL.summertemp, aes(x = year4, y = temperature_C, color = lakename)) +
   geom_abline(intercept = -97.72, slope = 0.06) +
   # make it look better
   labs(x = "", y = expression("Temperature " ( degree~C)), color = "") +
-  theme(legend.spacing.x = unit(0, "cm"))
+  theme(legend.spacing.x = unit(0, "cm")) # Make legend labels appear closer on graph (removes   spaces)
 print(NTL.tempmodel)
 ```
 
 Question: How would you interpret the collective results of your mixed effects model in the context of the study question?
 
-> ANSWER: 
+> ANSWER: There is a statistically significant increase in surface temperatures over time of 0.06 degrees Celsius per year (random effects model, random effect = lakename, p < 0.0001, R2 = 0.11)
