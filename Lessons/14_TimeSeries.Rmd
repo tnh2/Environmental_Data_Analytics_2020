@@ -183,11 +183,11 @@ In general, detecting a monotonic trend requires a long sequence of data with fe
 
 Adjusting the data may be necessary to fulfill the assumptions of a trend test. These adjustments include **aggregation**, **subsampling**, and **interpolation**. What do each of these mean, and why might we want to use them?
 
-> aggregation: 
+> aggregation: Combining data to create data for a coarser timeframe (e.g., combine monthly data to make yearly data).
 
-> subsampling: 
+> subsampling: Selecting a smaller set of a larger data set (e.g., taking a random sample from daily data for each month, or taking the first day of each month to get monthly data).
 
-> interpolation: 
+> interpolation: Filling in data gaps based on known data
 
 Common interpolation methods: 
 
@@ -265,13 +265,14 @@ EnoDischarge.late.monthly <- EnoDischarge.late %>%
   
 EnoDischarge.late.monthly$Date <- as.Date(paste(EnoDischarge.late.monthly$Year, 
                                                 EnoDischarge.late.monthly$Month, 
-                                                1, sep="-"), 
-                                          format = "%Y-%m-%d")
+                                                1, sep="-"), # Placeholder date on the first of the month (to make plotting easier/look better)
+                                          format = "%Y-%m-%d") 
 
 # Generate time series (smk.test needs ts, not data.frame)
 EnoDischarge.late.monthly.ts <- ts(EnoDischarge.late.monthly$Discharge, frequency = 12, 
-                        start = c(1985, 10, 1), end = c(2019, 12, 1))
-# Run SMK test
+                        start = c(1985, 10, 1), end = c(2019, 12, 1)) # Specify start and end dates since we aren't using actual dates (timeseries is just a single column/list of data)
+
+# Run SMK test (requires timeseries object, not dataframe)
 EnoDischarge.late.trend <- smk.test(EnoDischarge.late.monthly.ts)
 
 # Inspect results
@@ -287,7 +288,7 @@ print(EnoDischarge.monthly)
 
 What would we conclude based on these findings? 
 
->
+> Based on these results, there is no significant trend over time in the Eno River discharge (Seasonal Mann Kendall Test, z = -0.1397, p = 0.8889).
  
 If a significant trend was present, we could compute a **Sen's Slope** to quantify that trend (`sens.slope` function in the trend package).
 

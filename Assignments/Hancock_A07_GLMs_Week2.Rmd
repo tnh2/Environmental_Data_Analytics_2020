@@ -1,6 +1,6 @@
 ---
 title: "Assignment 7: GLMs week 2 (Linear Regression and beyond)"
-author: "Student Name"
+author: "Thomas Hancock"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -26,10 +26,23 @@ The completed exercise is due on Tuesday, February 25 at 1:00 pm.
 2. Build a ggplot theme and set it as your default theme.
 
 ```{r}
-#1
+#1  Load libraries, etc.
+getwd() # Check working directory
+library(tidyverse)
+library(nlme)
+library(piecewiseSEM)
+
+# Load data
+Litter.Processed <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv")
+NTL.chemphys.Raw <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv")
 
 
-#2
+#2 Set theme
+myTheme <- theme_classic(base_size = 10) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top") # Define a theme based off of the classic theme
+
+theme_set(myTheme) # Set defined theme to default
 
 ```
 
@@ -46,32 +59,53 @@ Research question: What is the best set of predictors for lake temperatures in J
 4. Run an AIC to determine what set of explanatory variables (year4, daynum, depth) is best suited to predict temperature. Run a multiple regression on the recommended set of variables. 
 
 ```{r}
-#3
+#3 Wrangle data 
+NTL.chemphys.Filtered <- 
+  NTL.chemphys.Raw %>%
+  filter(daynum > 181 & daynum < 213) %>% # Filter for days in July
+  select(lakename:daynum,depth,temperature_C) %>% # Select specific columns
+  na.omit() # Remove entries with any NA values
 
+#4 Use AIC to determine best explanatory variables
+NTL.AIC <- lm(data = NTL.chemphys.Filtered, temperature_C ~ year4 + daynum + depth)
+step(NTL.AIC) # Compare AIC with explanatory variables removed iteratively
 
-#4
-
+# The AIC was lowest for the model with all explanatory variables
+NTL.model1 <- lm(data = NTL.chemphys.Filtered, temperature_C ~ year4 + daynum + depth)
+summary(NTL.model1)
 ```
 
 5. What is the final set of explanatory variables that predict temperature from your multiple regression? How much of the observed variance does this model explain?
 
-> Answer: 
+> Answer: The set of explanatory variables that best explains temperature variation in the NTL-LTER region is year4, daynum, and depth (all the starting explanatory varaibles). This model explains 74.17% of the variance (multiple linear regression; F-statistic = 9303; df = 3, 9718; R2 = 0.7417).
 
 6. Run an interaction effects ANCOVA to predict temperature based on depth and lakename from the same wrangled dataset.
 
 ```{r}
-#6
+#6 ANCOVA with interaction effects between lakename and depth
+NTL.interaction <- lm(data = NTL.chemphys.Filtered, temperature_C ~ lakename * depth)
+summary(NTL.interaction)
 
 ```
 
 7. Is there a significant interaction between depth and lakename? How much variance in the temperature observations does this explain?
 
-> Answer: 
+> Answer: There is a significant interaction between depth and lakename for predicting lake temperature (ANCOVA, p < 0.1 for all levels, R2 = 0.7857). This model accounts for 78.57% of the variance. The interaction between Paul Lake and depth is the least significant of the interactions (p = 0.09664).
 
 8. Create a graph that depicts temperature by depth, with a separate color for each lake. Add a geom_smooth (method = "lm", se = FALSE) for each lake. Make your points 50 % transparent. Adjust your y axis limits to go from 0 to 35 degrees. Clean up your graph to make it pretty. 
 
 ```{r}
-#8
+#8 Plot of temperature vs depth for each lake
+NTL.plot <- 
+  ggplot(NTL.chemphys.Filtered, aes(x = depth, y = temperature_C, color = lakename)) +
+  geom_point(alpha = 0.5) + # Set transparency
+  geom_smooth(method = "lm", se = FALSE) + # Add best-fit line for each lake (w/out std. error)
+  ylim(0,35) + # Restrict y-axis
+  labs(x = "Depth, m", y = expression("Temperature " ( degree~C)), color = "") +
+  scale_color_viridis_d()
+
+print(NTL.plot)
+  
 
 ```
 
@@ -81,21 +115,33 @@ a. Build and run a mixed effects model.
 b. Check the difference between the marginal and conditional R2 of the model. 
 
 ```{r}
+# 9a Mixed effects model
+LitterTest.mixed <- lme(data = Litter.Processed, # Mixed effects model
+                        dryMass ~ nlcdClass * functionalGroup, # Fixed effects
+                        random = ~1 | plotID) # Random effects
+summary(LitterTest.mixed)
 
+# 9b Compare marginal (no random effect) and conditional (mixed effects) r-squared values
+rsquared(LitterTest.mixed) # Show R^2 value
 
 ```
 
 b. continued... How much more variance is explained by adding the random effect to the model? 
 
-> Answer: 2 %
+> Answer: 2.1% more variance is explained by the random effects model compared to just the fixed effects (R2_conditional = 0.268, R2_marginal = 0.247).
 
 c. Run the same model without the random effect.
 d. Run an anova on the two tests. 
 ```{r}
- 
+# 9c Fixed effects model
+LitterTest.fixed <- gls(data = Litter.Processed, dryMass ~ nlcdClass * functionalGroup)
+summary(LitterTest.fixed)
+
+# 9d Compare results using ANOVA
+anova(LitterTest.mixed, LitterTest.fixed)
 
 ```
 
 d. continued... Is the mixed effects model a better model than the fixed effects model? How do you know?
 
-> Answer: 
+> Answer: The models have a significantly different fit (ANOVA, p < 0.0001), and the mixed effects model has a lower AIC (9038 vs 9058), so it is the better model.
