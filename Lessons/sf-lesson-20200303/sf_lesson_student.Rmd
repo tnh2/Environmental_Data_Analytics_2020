@@ -57,7 +57,7 @@ library("here")
 Please make sure that the pdf() command works on your computer.
 
 ```{r check.pdf}
-pdf(here("outputs", "pdf_test.pdf"), width = 11, height = 8.5)
+pdf(here("outputs", "pdf_test.pdf"), width = 11, height = 8.5) # Saves as a pdf
 ggplot(data = cars) +
   geom_point(aes(x = dist, y = speed))
 dev.off()
@@ -74,7 +74,7 @@ For expert advise/pleading on why you should use R projects and the here package
 
 ```{r activity.here}
 # test out here
-here()
+here() # Similar to working directory
 # if you've opened this script like I suggested your output should look something like
 # for mac: [1] "/User/.../sf-lesson"
 # for windows: [1] "C:\\...\sf-lesson"
@@ -263,6 +263,7 @@ Here is what the spatial data for this lesson looks like (Figure 4). Southeast s
 Start by reading in the basin boundaries for non-reference (i.e., notable human impact) for the Southeast Plains using `st_read()` from the sf package. Notice how you only call the .shp file here. You don't need to include all the other files that come along with the .shp file (i.e., .prj, .sbn, .shx, .sbx, .dbf, etc.).
 
 ```{r read.in.some.data}
+# st_read reads in shapefile
 basins_nf_seplains_raw <- st_read(here("data", "spatial_data", "bas_nonref_SEPlains.shp"))
 # note how I'm using the here package!
 ```
@@ -279,9 +280,9 @@ I like to always save a copy of the raw data in my R session and rename all new 
 
 ```{r activity.load.data}
 # add your code here
-gages_raw <- 
-southeast_state_bounds_raw <- 
-my_tabular_data_raw <- 
+gages_raw <- st_read(here("data", "spatial_data", "gagesII_9322_sept30_2011.shp"))
+southeast_state_bounds_raw <- st_read(here("data", "spatial_data", "southeast_state_bounds.shp"))
+my_tabular_data_raw <- read.csv(here("data", "tabular_data", "conterm_climate.txt"))
 
 # red warning text is telling you how the data is being parsed
 ```
@@ -304,6 +305,11 @@ Use base R commands to answer the following questions (for basins_nf_seplains_ra
 ```{r activity.check.out.data}
 
 # add your code here
+class(basins_nf_seplains_raw)
+names(basins_nf_seplains_raw)
+dim(basins_nf_seplains_raw)
+attributes(basins_nf_seplains_raw)
+head(basins_nf_seplains_raw)
 
 # bonus, add your code here
 ```
@@ -325,6 +331,9 @@ Use st_crs() to look at the CRSs of the spatial data you have loaded up so far. 
 
 ```{r activity.check.out.data.again}
 # add your code here
+st_crs(basins_nf_seplains_raw)
+st_crs(gages_raw)
+st_crs(southeast_state_bounds_raw)
 
 # first two will not have EPSG code but have proj4 string (i.e., "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
 
@@ -371,23 +380,29 @@ Last, check the CRSs of each.
 ```{r activity.setting.projecting}
 # define proj4 string and EPSG code
 # add your code here
-my_proj4 <- 
-my_epsg <- 
+my_proj4 = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+my_epsg <- 5070
 
 # setting projections
 # set the proj4 string first and then set the EPSG code (because proj4 will over-ride EPSG if you set EPSG first)
 # add your code here
 # basins
 basins_nf_seplains <- basins_nf_seplains_raw
+st_crs(basins_nf_seplains) <- my_proj4
+st_crs(basins_nf_seplains) <- my_epsg
 
 # add your code here
 # gages
 gages <- gages_raw
+st_crs(gages) <- my_proj4
+st_crs(gages) <- my_epsg
 
 # state bounds
 # this one looks good so you don't need to do anything but here's the code anyway
 # add your code here
 southeast_state_bounds <- southeast_state_bounds_raw
+st_crs(southeast_state_bounds) <- my_proj4
+st_crs(southeast_state_bounds) <- my_epsg
 
 # projecting to North America Albers Equal Area Conic
 # add your code here
@@ -527,9 +542,13 @@ Bonus: What are some other spatial operations (or confirmations) that you could 
 ```{r activity.gages.select}
 # select a state, here I'm choosing North Carolina (NC)
 # add your code here
+NC_bounds <- southeast_state_bounds[5,]
+NC_bounds_geometry <- st_geometry(NC_bounds)
 
 # check
 # add your code here
+class(NC_bounds_geometry)
+NC_bounds_geometry
 
 # select watersheds that intersect with NC bounds
 # add your code here
