@@ -552,12 +552,17 @@ NC_bounds_geometry
 
 # select watersheds that intersect with NC bounds
 # add your code here
+NC_watersheds <- st_intersection(basins_nf_seplains, NC_bounds_geometry)
 
 # check
 # add your code here
+head(NC_watersheds)
+summary(NC_watersheds)
 
 # select gages that fall within NC bounds
 # add your code here
+NC_gages <- st_intersection(gages, NC_bounds_geometry)
+summary()
 
 # bonus
 # add your code here
