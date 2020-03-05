@@ -542,8 +542,9 @@ Bonus: What are some other spatial operations (or confirmations) that you could 
 ```{r activity.gages.select}
 # select a state, here I'm choosing North Carolina (NC)
 # add your code here
-NC_bounds <- southeast_state_bounds[5,]
-NC_bounds_geometry <- st_geometry(NC_bounds)
+NC_bounds_geometry <- southeast_state_bounds %>%
+  filter(NAME == "North Carolina") %>%
+  st_geometry() # Only takes geometry data (not tabular data)
 
 # check
 # add your code here
@@ -562,10 +563,16 @@ summary(NC_watersheds)
 # select gages that fall within NC bounds
 # add your code here
 NC_gages <- st_intersection(gages, NC_bounds_geometry)
-summary()
+head(NC_gages)
+summary(NC_gages)
 
 # bonus
 # add your code here
+NC_area <- st_area(NC_bounds_geometry) # find the area of NC
+NC_centroid <- st_centroid(NC_bounds_geometry) # find the centroid of the NC
+NC_gages_buffer_100m <- st_buffer(NC_gages, dist = 100) # make a buffer around the stream gages in NC
+not_NC_gages <- st_difference(gages, NC_bounds_geometry) # find stream gages not in NC
+
 ```
 
 It's really helpful to actually plot these results before moving forward with your work. That way you an make sure the sf commands are doing what you expect. We'll talk about plotting next...
@@ -574,7 +581,7 @@ It's really helpful to actually plot these results before moving forward with yo
 
 #### 3.2.1 Viz Basics
 
-An import part of spatial data analysis is to *check your work* and also *share your results*. The sf package makes this very easy by adding a geom_sf() to add a vector data layer and geom_sf_text() to add a label layer to any ggplot2 object.
+An important part of spatial data analysis is to *check your work* and also *share your results*. The sf package makes this very easy by adding a geom_sf() to add a vector data layer and geom_sf_text() to add a label layer to any ggplot2 object.
 
 Usually, I (Sheila) use RStudio to visualize all of my plots but since spatial data often has a large file size, it can take a while to load in the built-in RStudio plotting window. Until the folks at RStudio and sf package developers deal with this, I recommend exporting your spatial visualizations to PDF files in a dedicated folder. Here, we'll practice exporting our plots to the "outputs" folder. Make sure you run all lines of code starting from pdf() to dev.off(). The pdf() will write and open a new empty PDF file and dev.off() will close it. It's ok to get a "null device" message here. R is just telling you that it closed the pdf file it created.
 
@@ -601,6 +608,14 @@ ggplot(data = southeast_state_bounds) +
   geom_sf_text(aes(label = NAME), color = "white") +
   theme_bw()
 dev.off()
+
+# basic plot
+pdf(here("outputs", "NC_bounds.pdf"), width = 11, height = 8.5)
+ggplot() +
+  geom_sf(data = NC_bounds) + # you can add color = "blue" to change outline color to blue or lwd = 2 to change the width of the lines
+  theme_bw() # add this to make the background white and not grey
+dev.off()
+
 ```
 
 **Activity**
@@ -611,6 +626,11 @@ Let's check your operations from the 3.1.2 activity. You are trying for somethin
 # plot NC watershed boundardies from 3.1.2
 pdf(here("outputs", "spatial_operations_test_fig.pdf"), width = 11, height = 8.5)
 # add your code here
+ggplot() +
+  geom_sf(data = NC_bounds, fill = NA) +
+  geom_sf(data = NC_watersheds, fill = "salmon", alpha = 0.25) +
+  geom_sf(data = NC_gages) +
+  theme_bw()
 dev.off()
 ```
 
@@ -629,7 +649,7 @@ nc_state_bounds_geom <- southeast_state_bounds %>%
 # get data bounding box
 nc_bbox <- nc_state_bounds_geom %>%
   st_buffer(dist = 150000) %>% # this value is very arbitrary just wanting to make a large buffer around geometry
-  st_transform(4326) %>% # WGS84 (for lat and long)
+  st_transform(4326) %>% # WGS84 (for lat and long) projecting from albers equal conic
   st_bbox()
 nc_bbox # check
 
@@ -662,12 +682,12 @@ dev.off()
 # plot with basemap
 # windows version?
 pdf(here("outputs", "nc_with_basemap.pdf"), width = 11, height = 8.5)
-ggmap(nc_basemap) +
+ggmap(nc_basemap) + # Using ggmap - sets CRS to input data (nc_basemap)
   geom_sf(data = nc_state_bounds_geom_wsg84, fill = NA, lwd = 1, inherit.aes = FALSE)
 dev.off()
 
 # bonus
-# try chaning the zoom on get_map() and see what happens
+# try changing the zoom on get_map() and see what happens
 # look at the help menu for more information on the zoom range
 ```
 
