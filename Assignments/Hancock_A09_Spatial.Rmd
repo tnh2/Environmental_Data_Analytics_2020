@@ -1,0 +1,163 @@
+---
+title: "Assignment 9: Spatial Analysis"
+author: "Thomas Hancock"
+output: pdf_document
+geometry: margin=2.54cm
+editor_options: 
+  chunk_output_type: console
+---
+
+## OVERVIEW
+
+This exercise accompanies the lessons in Environmental Data Analytics on spatial analysis. 
+
+## Directions
+1. Use this document to create code for a map. You will **NOT** be turning in the knitted Rmd file this time, only the pdf output for a map.
+2. When you have produced your output, submit **only** the pdf file for the map, without any code. Please name your file "StudentName_A09_Spatial.pdf".
+
+The completed exercise is due on Thursday, March 19 at 1:00 pm.
+
+## Create a map
+
+You have three options for this assignment, and you will turn in just **one** final product. Feel free to choose the option that will be most beneficial to you. For all options, to earn full points you should use best practices for data visualization that we have covered in previous assignments (e.g., relabeling axes and legends, choosing non-default color palettes, etc.).
+
+Here are your three options: 
+
+1. Reproduce figure 1b from the spatial lesson, found in section 3.2.2. You may choose a state other than North Carolina, but your map should still contain the spatial features contained in figure 1b in the "img" folder. 
+
+2. Create a new map that mixes spatial and tabular data, as in section 3.3 of the spatial lesson. You may use the maps created in the lesson as an example, but your map should contain data other than precipitation days per year. This map should include: 
+
+* State boundary layer
+* Basin boundary layer
+* Gage layer
+* Tabular data (as an aesthetic for one of the layers)
+
+3. Create a map of any other spatial data. This could be data from the spatial lesson, data from our other course datasets (e.g., the Litter dataset includes latitude and longitude of trap sites), or another dataset of your choosing.  Your map should include: 
+
+* One or more layers with polygon features (e.g., country boundaries, watersheds)
+* One or more layers with point and/or line features (e.g., sampling sites, roads)
+* Tabular data that correpond to one of the layers, specified as an aesthetic (e.g., total litter biomass at each trap, land cover class at each trap)
+
+Hint: One package that may come in handy here is the `maps` package, which contains several options for basemaps that cover political and geologic boundaries.
+
+
+## Data Setup
+```{r data.setup}
+# Check working directory
+getwd()
+
+
+# Load packages
+library("readr")
+library("dplyr")
+library("tidyr")
+library("ggplot2")
+library("purrr")
+library("sf") # Spatial package
+library("ggmap") # Has basemaps
+library("here")
+
+# Load STORES data
+STORES_files = list.files(path = here("Data", "Raw", "A09_Spatial_Data")
+                        , pattern="*.csv", full.names=TRUE) # Get file names in a list
+
+STORES_list <- lapply(STORES_files, read.csv) # Read data files into a list
+
+STORES_data_raw <- data.frame() # Create empty dataframe
+for (i in 1:length(STORES_list)) {
+  # STORES_list[[i]] %>%
+  #   filter(Class == "A") %>%
+  #   select(Upper.Identifier, Upper.latitude, Upper.longitude, Energy..GWh.,
+  #          Combined.water.area..ha., Energy.stoage.MWh.per.ha)
+  STORES_data_raw <- rbind(STORES_data_raw,STORES_list[[i]])
+}
+
+rm(STORES_list) # Remove list with all the data to free up memory
+
+# Read in state boundaries shape file
+SE_state_bounds_raw <- st_read(here("Data", "Raw", "A09_Spatial_Data",
+                                 "southeast_state_bounds.shp"))
+
+# Set Coordinate Reference System values
+my_proj4 = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+my_epsg <- 5070
+
+# Set coordinate references system to 
+st_crs(SE_state_bounds_raw) <- my_proj4
+st_crs(SE_state_bounds_raw) <- my_epsg
+
+
+```
+
+
+## Data Tidying
+In the next step, we will tidy up the data by selecting only the Class A sites and dropping the many columns of information we do not need. We will then change our tabular (CSV-based) data into spatial data.
+```{r data.tidying}
+# Filter data and drop unnecessary columns
+STORES_data_filtered <- STORES_data_raw %>%
+  filter(Class == "A") %>%
+  select(Upper.Identifier, Upper.latitude, Upper.longitude, Energy..GWh.,
+         Combined.water.area..ha., Energy.stoage.MWh.per.ha, Class)
+
+# Convert to spatial data using lat-long coordinates for upper reservior
+STORES_sf <- st_as_sf(STORES_data_filtered, coords = c("Upper.longitude", "Upper.latitude"),
+                      crs = 4326, dim = "XY") # CRS = WGS84 since we are using lat-long
+
+
+# Select only NC state boundary and project into WGS84
+NC_state_bounds <- SE_state_bounds_raw %>%
+  filter(NAME == "North Carolina") %>%
+  st_geometry()
+
+```
+
+
+## Data Analysis
+```{r data.analysis}
+# Select STORES sites that are within North Carolina
+NC_STORES <- STORES_sf %>%
+  st_transform(5070) %>%
+  st_intersection(NC_state_bounds)
+
+```
+
+## Plotting
+```{r plots}
+
+#NC_STORES2 <- filter(NC_STORES, Energy..GWh. == 5 | Energy..GWh. == 150)
+
+# Get data bounding box
+nc_bbox <- NC_state_bounds %>%
+  st_buffer(dist = 15000) %>% # this value is very arbitrary just wanting to make a large buffer around geometry
+  st_transform(4326) %>% # WGS84 (for lat and long) projecting from albers equal conic
+  st_bbox()
+
+# fix bounding box columns so they match what is needed for the ggmap::get_map() function
+nc_bbox_fix <- c(left = nc_bbox[[1]], bottom = nc_bbox[[2]], right = nc_bbox[[3]], top = nc_bbox[[4]])
+
+# get basemap
+nc_basemap <- get_map(nc_bbox_fix, maptype = 'terrain-background', source = 'stamen', zoom = 8)
+class(nc_basemap)
+st_crs(nc_basemap)
+
+# Convert sites and state boundaries to lat-long
+NC_STORES <- st_transform(NC_STORES, 4326)
+NC_state_bounds <- st_transform(NC_state_bounds, 4326)
+
+
+# basic plot
+pdf(here("Assignments", "Hancock_A09_Spatial.pdf"), width = 11, height = 8.5)
+ggmap(nc_basemap) +
+#ggplot() +
+  geom_sf(data = NC_state_bounds, fill = NA, lwd = 1, inherit.aes = FALSE) +
+  geom_sf(data = NC_STORES, aes(color = as.factor(Energy..GWh.)), lwd = 2,
+          inherit.aes = FALSE) + # Need inherit.aes = FALSE to make it work!
+  scale_color_brewer(palette = "Reds") +
+  labs(title = "Potential Pumped-hydro Storage Locations in North Carolina",
+       caption = "Created by Thomas Hancock \n 
+       Data from AREMI \n Basemap from ggmap",
+       color = "Energy Storage (GWh)") +
+  theme_bw() 
+dev.off()
+
+```
