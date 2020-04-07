@@ -31,14 +31,34 @@ A handy cheat sheet for R markdown can be found [here](https://www.rstudio.com/w
 
 <Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets to figure out how to make bold and italic text).>
 
+* *italicize* using asterisks surrounding a word
+* **bold** using two asterisks on each side of a word or phrase
+* Documentation of what you are doing
+* Allows for text, graphics, and code all in one clean(ish) document
+* Control over what is displayed
+* Easy to share/distribute
+* Allows for more organization
+
 ## TEXT EDITING CHALLENGE
 
 Create a table below that details the example datasets we have been using in class. The first column should contain the names of the datasets and the second column should include some relevant information about the datasets. (Hint: use the cheat sheets to figure out how to make a table in Rmd)
+
+```{r table creation}
+```
+Dataset Name  | Description
+--------------|-------------
+EPA Air       | Air quality data
+Leaf Litter   | Litter collection data
+LTER Lake Data| Lake data from NTL
 
 
 ## R CHUNK EDITING CHALLENGE
 ### Installing packages
 Create an R chunk below that installs the package `knitr`. Instead of commenting out the code, customize the chunk options such that the code is not evaluated (i.e., not run). 
+
+```{r install package, eval = FALSE}
+install.packages("knitr")
+```
 
 
 ### Setup
@@ -48,6 +68,27 @@ Load the NTL-LTER_Lake_Nutrients_Raw dataset, display the head of the dataset, a
 
 Customize the chunk options such that the code is run but is not displayed in the final document.
 
+```{r setup, message = FALSE, echo = FALSE}
+getwd()
+library(tidyverse)
+library(knitr)
+library(viridis)
+
+# Set theme
+mytheme <- theme_classic() +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
+
+NTL.Nutrients <- read.csv("./Data/Raw/NTL-LTER_Lake_Nutrients_Raw.csv")
+
+head(NTL.Nutrients)
+
+class(NTL.Nutrients$sampledate)
+NTL.Nutrients$sampledate <- as.Date(NTL.Nutrients$sampledate, "%m/%d/%y")
+class(NTL.Nutrients$sampledate)
+```
+
 
 ### Data Exploration, Wrangling, and Visualization
 Create an R chunk below to create a processed dataset do the following operations: 
@@ -55,23 +96,73 @@ Create an R chunk below to create a processed dataset do the following operation
 * Include all columns except lakeid, depth_id, and comments
 * Include only surface samples (depth = 0 m)
 
+```{r Data Processing}
+NTL.Nutrients.Processed <- NTL.Nutrients %>%
+  select(-c("lakeid", "depth_id", "comments")) %>%
+  filter(depth == 0)
+
+```
+
 
 Create a second R chunk to create a summary dataset with the mean, minimum, maximum, and standard deviation of total nitrogen concentrations for each lake. Create a second summary dataset that is identical except that it evaluates total phosphorus. Customize the chunk options such that the code is run but not displayed in the final document. 
+
+```{r Summary, echo = FALSE}
+NTL.Nutrients.Nitrogen.Summary <- NTL.Nutrients.Processed %>%
+  filter(!is.na(tn_ug)) %>%
+  group_by(lakename) %>%
+  summarise(meanN = mean(tn_ug), minN = min(tn_ug), maxN = max(tn_ug), stdevN = sd(tn_ug))
+
+NTL.Nutrients.Phosphorus.Summary <- NTL.Nutrients.Processed %>%
+  filter(!is.na(tp_ug)) %>%
+  group_by(lakename) %>%
+  summarise(meanP = mean(tp_ug), minP = min(tp_ug), maxP = max(tp_ug), stdevP = sd(tp_ug))
+
+```
 
 
 Create a third R chunk that uses the function `kable` in the knitr package to display two tables: one for the summary dataframe for total N and one for the summary dataframe of total P. Use the `caption = " "` code within that function to title your tables. Customize the chunk options such that the final table is displayed but not the code used to generate the table. 
 
+```{r kable, echo = FALSE}
+Nitrogen.Table <- kable(NTL.Nutrients.Nitrogen.Summary, caption = "Nitrogen Summary")
+Phos.Table <- kable(NTL.Nutrients.Phosphorus.Summary, caption = "Nitrogen Summary")
+
+Nitrogen.Table
+Phos.Table
+```
+
 
 Create a fourth and fifth R chunk that generates two plots (one in each chunk): one for total N over time with different colors for each lake, and one with the same setup but for total P. Decide which geom option will be appropriate for your purpose, and select a color palette that is visually pleasing and accessible. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, customize the chunk options such that the figures are aligned on the left side of the page. Lastly, add a fig.cap chunk option to add a caption (title) to your plot that will display underneath the figure.
+
+```{r N Plot, echo = FALSE, fig.align = "left", fig.cap = "Total Nitrogen Over Time"}
+ggplot() +
+  geom_line(data = NTL.Nutrients.Processed, aes(x = sampledate, tn_ug, color = lakename)) +
+  scale_color_viridis_d(option = "inferno", begin = 0.1, end = 0.8) +
+  labs(x = "Sample Date", y = "Total Nitrogen (ug/L)", color = "")
+  
+```
+
+```{r P Plot, echo = FALSE, fig.align = "left", fig.cap = "Total Phosphorus Over Time"}
+ggplot() +
+  geom_line(data = NTL.Nutrients.Processed, aes(x = sampledate, tp_ug, color = lakename)) +
+  scale_color_viridis_d(option = "inferno", begin = 0.1, end = 0.8) +
+  labs(x = "Sample Date", y = "Total Phosphorus (ug/L)", color = "")
+  
+```
 
 
 ### Other options
 What are the chunk options that will suppress the display of errors, warnings, and messages in the final document? 
 
-> ANSWER: 
+> ANSWER: Respectively: error, warning, message
 
 ### Communicating results
 Write a paragraph describing your findings from the R coding challenge above. This should be geared toward an educated audience but one that is not necessarily familiar with the dataset. Then insert a horizontal rule below the paragraph. Below the horizontal rule, write another paragraph describing the next steps you might take in analyzing this dataset. What questions might you be able to answer, and what analyses would you conduct to answer those questions?
+
+This is paragraph one, describing the data set. The data has various data about lake conditions such as total nitrogen, total phosphorous, and species of each chemical. Other data including temperature and sampling conditions are also included.
+
+***
+
+This is the second paragraph, describing the next steps I would take to analyze this data. It would be useful to have a specific research question, so that is probably where I would go next. Doing some statisitical tests across the lakes or across time seem like good starting places for more exploration as well. 
 
 ## KNIT YOUR PDF
 When you have completed the above steps, try knitting your PDF to see if all of the formatting options you specified turned out as planned. This may take some troubleshooting. 
